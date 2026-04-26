@@ -1,540 +1,749 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>URBY LABS - Game Zone</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=B612+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rajdhani:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=B612+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+      rel="stylesheet"
+    />
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        'game': ['"B612+Mono"', 'monospace','bold'],
-                        'tech': ['Rajdhani', 'sans-serif'],
-                    },
-                    colors: {
-                        'neon-blue': '#1b76ee',
-                        'neon-pink': '#ff00ff',
-                        'neon-green': '#00ff88',
-                        'dark-bg': '#0a0a0f',
-                        'panel': '#1a1a2e',
-                    },
-                    animation: {
-                        //'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
-                        'scanline': 'scanline 8s linear infinite',
-                        'float': 'float 3s ease-in-out infinite',
-                    }
-                }
-            }
-        }
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              game: ['"B612+Mono"', "monospace", "bold"],
+              tech: ["Rajdhani", "sans-serif"],
+            },
+            colors: {
+              "neon-blue": "#1b76ee",
+              "neon-pink": "#ff00ff",
+              "neon-green": "#00ff88",
+              "dark-bg": "#0a0a0f",
+              panel: "#1a1a2e",
+            },
+            animation: {
+              //'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
+              scanline: "scanline 8s linear infinite",
+              float: "float 3s ease-in-out infinite",
+            },
+          },
+        },
+      };
     </script>
 
     <style>
-        body {
-            background-color: #0a0a0f;
-            background-image: 
-                linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
-            background-size: 30px 30px;
-        }
+      body {
+        background-color: #0a0a0f;
+        background-image:
+          linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+        background-size: 30px 30px;
+      }
 
-        .scanlines::before {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                to bottom,
-                rgba(255,255,255,0),
-                rgba(255,255,255,0) 50%,
-                rgba(0,0,0,0.1) 50%,
-                rgba(0,0,0,0.1)
-            );
-            background-size: 100% 4px;
-            pointer-events: none;
-            z-index: 9999;
-            animation: scanline 10s linear infinite;
-        }
+      .scanlines::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          to bottom,
+          rgba(255, 255, 255, 0),
+          rgba(255, 255, 255, 0) 50%,
+          rgba(0, 0, 0, 0.1) 50%,
+          rgba(0, 0, 0, 0.1)
+        );
+        background-size: 100% 4px;
+        pointer-events: none;
+        z-index: 9999;
+        animation: scanline 10s linear infinite;
+      }
 
-        .neon-text {
-            /*
+      .neon-text {
+        /*
             text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor;
             */
-        }
+      }
 
-        .game-card {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            border: 2px solid #00f3ff;
-            box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
-            transition: all 0.3s;
-            i {
-                transition: margin-left 0.3s ease-in-out;
-            }
+      .game-card {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        border: 2px solid #00f3ff;
+        box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
+        transition: all 0.3s;
+        i {
+          transition:
+            margin-left 0.3s ease-in-out,
+            height 0.3s ease-in-out;
         }
+      }
 
-        .game-card:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 0 30px rgba(0, 243, 255, 0.6);
-            i {
-                margin-left: 20px;
-                max-width: fit-content;
-                padding: 1rem;
-                border-radius: 50%;
-                background-color: rgba(0,0,0,0.5) !important;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            }
+      .game-card:hover {
+        transform: translateY(-15px) scale(1.02);
+        box-shadow: 0 0 30px rgba(0, 243, 255, 0.6);
+        div {
+          background-color: rgba(0, 0, 0, 0.5) !important;
+          padding: 0.5rem;
+          padding-bottom: 1.5rem;
+          border-radius: 1rem;
         }
+        i {
+          margin-left: 20px;
+        }
+      }
 
-        .game-btn {
-            background: linear-gradient(45deg, #00f3ff, #0080ff);
-            border: none;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s;
-            clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
-        }
+      .game-btn {
+        background: linear-gradient(45deg, #00f3ff, #0080ff);
+        border: none;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s;
+        clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
+      }
 
-        .game-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(0, 243, 255, 0.8);
-        }
+      .game-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 20px rgba(0, 243, 255, 0.8);
+      }
 
-        .game-btn::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(
-                45deg,
-                transparent 30%,
-                rgba(255,255,255,0.3) 50%,
-                transparent 70%
-            );
-            transform: rotate(45deg);
-            transition: all 0.5s;
-            opacity: 0;
-        }
+      .game-btn::after {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(
+          45deg,
+          transparent 30%,
+          rgba(255, 255, 255, 0.3) 50%,
+          transparent 70%
+        );
+        transform: rotate(45deg);
+        transition: all 0.5s;
+        opacity: 0;
+      }
 
-        .game-btn:hover::after {
-            animation: shine 0.5s ease-in-out;
-        }
+      .game-btn:hover::after {
+        animation: shine 0.5s ease-in-out;
+      }
 
-        @keyframes shine {
-            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); opacity: 0; }
-            50% { opacity: 1; }
-            100% { transform: translateX(100%) translateY(100%) rotate(45deg); opacity: 0; }
+      @keyframes shine {
+        0% {
+          transform: translateX(-100%) translateY(-100%) rotate(45deg);
+          opacity: 0;
         }
+        50% {
+          opacity: 1;
+        }
+        100% {
+          transform: translateX(100%) translateY(100%) rotate(45deg);
+          opacity: 0;
+        }
+      }
 
-        @keyframes pulseGlow {
-            0%, 100% { box-shadow: 0 0 10px rgba(0, 243, 255, 0.5); }
-            50% { box-shadow: 0 0 30px rgba(0, 243, 255, 1); }
+      @keyframes pulseGlow {
+        0%,
+        100% {
+          box-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
         }
+        50% {
+          box-shadow: 0 0 30px rgba(0, 243, 255, 1);
+        }
+      }
 
-        @keyframes scanline {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(10px); }
+      @keyframes scanline {
+        0% {
+          transform: translateY(0);
         }
+        100% {
+          transform: translateY(10px);
+        }
+      }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0);
         }
+        50% {
+          transform: translateY(-10px);
+        }
+      }
 
-        .inventory-slot {
-            background: rgba(26, 26, 46, 0.9);
-            border: 2px solid #333;
-            transition: all 0.2s;
-            cursor: pointer;
-        }
+      .inventory-slot {
+        background: rgba(26, 26, 46, 0.9);
+        border: 2px solid #333;
+        transition: all 0.2s;
+        cursor: pointer;
+      }
 
-        .inventory-slot:hover {
-            border-color: #00f3ff;
-            box-shadow: 0 0 15px rgba(0, 243, 255, 0.5);
-        }
+      .inventory-slot:hover {
+        border-color: #00f3ff;
+        box-shadow: 0 0 15px rgba(0, 243, 255, 0.5);
+      }
 
-        .inventory-slot.selected {
-            border-color: #00ff88;
-            box-shadow: 0 0 20px rgba(0, 255, 136, 0.6);
-        }
+      .inventory-slot.selected {
+        border-color: #00ff88;
+        box-shadow: 0 0 20px rgba(0, 255, 136, 0.6);
+      }
 
-        .pixel-border {
-            image-rendering: pixelated;
-            box-shadow: 
-                -4px 0 0 0 #000,
-                4px 0 0 0 #000,
-                0 -4px 0 0 #000,
-                0 4px 0 0 #000;
-            margin: 4px;
-        }
+      .pixel-border {
+        image-rendering: pixelated;
+        box-shadow:
+          -4px 0 0 0 #000,
+          4px 0 0 0 #000,
+          0 -4px 0 0 #000,
+          0 4px 0 0 #000;
+        margin: 4px;
+      }
 
-        .chat-widget {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 1000;
-        }
+      .chat-widget {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1000;
+      }
 
-        .hidden-section {
-            display: none !important;
-        }
+      .hidden-section {
+        display: none !important;
+      }
 
-        .fade-in {
-            animation: fadeIn 0.5s ease-in;
-        }
+      .fade-in {
+        animation: fadeIn 0.5s ease-in;
+      }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
         }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
 
-        /* Scrollbar personalizada */
-        ::-webkit-scrollbar {
-            width: 10px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #0a0a0f;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #00f3ff;
-            border-radius: 5px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #0080ff;
-        }
+      /* Scrollbar personalizada */
+      ::-webkit-scrollbar {
+        width: 10px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #0a0a0f;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #00f3ff;
+        border-radius: 5px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #0080ff;
+      }
     </style>
-</head>
-<body class="text-white font-tech scanlines min-h-screen flex flex-col">
-
+  </head>
+  <body class="text-white font-tech scanlines min-h-screen flex flex-col">
     <!-- Navbar -->
-    <nav id="navbar" class="fixed top-0 w-full bg-dark-bg/95 border-b-2 border-neon-blue z-50 backdrop-blur-sm">
-        <div class="container mx-auto px-4 py-3">
-            <div class="flex justify-between items-center">
-                <div class="flex items-center space-x-4 cursor-pointer" onclick="router.navigate('home')">
-                    <img src="icon.png" 
-                         alt="URBY LABS" class="w-10 h-10 animate-pulse-glow">
-                    <span class="font-game text-neon-blue text-sm md:text-base neon-text">URBY LABS</span>
-                </div>
-                
-                <div id="nav-links" class="hidden md:flex space-x-2">
-                    <!-- Dynamic links -->
-                </div>
+    <nav
+      id="navbar"
+      class="fixed top-0 w-full bg-white border-b-2 border-neon-blue z-50 backdrop-blur-sm"
+    >
+      <div class="container mx-auto px-4 py-3">
+        <div class="flex justify-between items-center">
+          <div
+            class="flex items-center space-x-4 cursor-pointer"
+            onclick="router.navigate('home')"
+          >
+            <img
+              src="icon.png"
+              alt="URBY LABS"
+              class="w-10 h-10 animate-pulse-glow"
+            />
+            <span
+              class="font-game text-neon-blue text-sm md:text-base neon-text"
+              >URBY LABS</span
+            >
+          </div>
 
-                <button onclick="toggleMobileMenu()" class="md:hidden text-neon-blue">
-                    <i class="fas fa-bars text-2xl"></i>
-                </button>
-            </div>
-            
-            <!-- Mobile Menu -->
-            <div id="mobile-menu" class="hidden md:hidden mt-4 pb-4">
-                <div id="mobile-nav-links" class="flex flex-col space-y-2">
-                    <!-- Dynamic mobile links -->
-                </div>
-            </div>
+          <div id="nav-links" class="hidden md:flex space-x-2">
+            <!-- Dynamic links -->
+          </div>
+
+          <button onclick="toggleMobileMenu()" class="md:hidden text-neon-blue">
+            <i class="fas fa-bars text-2xl"></i>
+          </button>
         </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden mt-4 pb-4">
+          <div id="mobile-nav-links" class="flex flex-col space-y-2">
+            <!-- Dynamic mobile links -->
+          </div>
+        </div>
+      </div>
     </nav>
 
     <!-- Main Content -->
     <main id="app" class="flex-grow pt-20 pb-20">
-        <!-- Dynamic content loaded here -->
+      <!-- Dynamic content loaded here -->
     </main>
 
     <!-- Footer -->
     <footer class="bg-panel border-t-2 border-neon-blue py-8 mt-auto">
-        <div class="container mx-auto px-4">
-            <div class="flex justify-center space-x-6 mb-4">
-                <a href="#" class="text-neon-blue hover:text-neon-pink transition-colors text-2xl">
-                    <i class="fab fa-instagram"></i>
-                </a>
-                <a href="#" class="text-neon-blue hover:text-neon-pink transition-colors text-2xl">
-                    <i class="fab fa-facebook"></i>
-                </a>
-                <a href="#" class="text-neon-blue hover:text-neon-pink transition-colors text-2xl">
-                    <i class="fab fa-twitter"></i>
-                </a>
-                <a href="#" class="text-neon-blue hover:text-neon-pink transition-colors text-2xl">
-                    <i class="fab fa-youtube"></i>
-                </a>
-                <a href="#" class="text-neon-blue hover:text-neon-pink transition-colors text-2xl">
-                    <i class="fab fa-whatsapp"></i>
-                </a>
-            </div>
-            <p class="text-center text-gray-400 font-game text-xs">
-                © 2026 URBY LABS - GAME OVER
-            </p>
+      <div class="container mx-auto px-4">
+        <div class="flex justify-center space-x-6 mb-4">
+          <a
+            href="#"
+            class="text-neon-blue hover:text-neon-pink transition-colors text-2xl"
+          >
+            <i class="fab fa-instagram"></i>
+          </a>
+          <a
+            href="#"
+            class="text-neon-blue hover:text-neon-pink transition-colors text-2xl"
+          >
+            <i class="fab fa-facebook"></i>
+          </a>
+          <a
+            href="#"
+            class="text-neon-blue hover:text-neon-pink transition-colors text-2xl"
+          >
+            <i class="fab fa-twitter"></i>
+          </a>
+          <a
+            href="#"
+            class="text-neon-blue hover:text-neon-pink transition-colors text-2xl"
+          >
+            <i class="fab fa-youtube"></i>
+          </a>
+          <a
+            href="#"
+            class="text-neon-blue hover:text-neon-pink transition-colors text-2xl"
+          >
+            <i class="fab fa-whatsapp"></i>
+          </a>
         </div>
+        <p class="text-center text-gray-400 font-game text-xs">
+          © 2026 URBY LABS - GAME OVER
+        </p>
+      </div>
     </footer>
 
     <!-- Chat Widget -->
     <div class="chat-widget">
-        <div id="chat-container" class="hidden bg-panel border-2 border-neon-green rounded-lg w-80 h-96 flex flex-col shadow-2xl">
-            <div class="bg-neon-green/20 border-b-2 border-neon-green p-3 flex justify-between items-center">
-                <span class="font-game text-neon-green text-xs">SUPPORT CHAT</span>
-                <button onclick="toggleChat()" class="text-neon-green hover:text-white">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div id="chat-messages" class="flex-grow overflow-y-auto p-3 space-y-2">
-                <!-- Messages loaded here -->
-            </div>
-            <div class="p-3 border-t-2 border-neon-green/30">
-                <div class="flex space-x-2">
-                    <input type="text" id="chat-input" placeholder="Type message..." 
-                           class="flex-grow bg-dark-bg border border-neon-green/50 rounded px-2 py-1 text-sm text-white focus:outline-none focus:border-neon-green">
-                    <button onclick="sendMessage()" class="bg-neon-green text-dark-bg px-3 py-1 rounded font-bold hover:bg-neon-blue transition-colors">
-                        <i class="fas fa-paper-plane"></i>
-                    </button>
-                </div>
-                <button onclick="sendToWhatsApp()" class="w-full mt-2 bg-green-600 text-white text-xs py-1 rounded hover:bg-green-700 transition-colors">
-                    <i class="fab fa-whatsapp"></i> Continue on WhatsApp
-                </button>
-            </div>
+      <div
+        id="chat-container"
+        class="hidden bg-panel border-2 border-neon-green rounded-lg w-80 h-96 flex flex-col shadow-2xl"
+      >
+        <div
+          class="bg-neon-green/20 border-b-2 border-neon-green p-3 flex justify-between items-center"
+        >
+          <span class="font-game text-neon-green text-xs">SUPPORT CHAT</span>
+          <button
+            onclick="toggleChat()"
+            class="text-neon-green hover:text-white"
+          >
+            <i class="fas fa-times"></i>
+          </button>
         </div>
-        
-        <button onclick="toggleChat()" id="chat-button" 
-                class="w-14 h-14 bg-neon-green rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform animate-bounce">
-            <i class="fas fa-comment-dots text-dark-bg text-2xl"></i>
-        </button>
+        <div id="chat-messages" class="flex-grow overflow-y-auto p-3 space-y-2">
+          <!-- Messages loaded here -->
+        </div>
+        <div class="p-3 border-t-2 border-neon-green/30">
+          <div class="flex space-x-2">
+            <input
+              type="text"
+              id="chat-input"
+              placeholder="Type message..."
+              class="flex-grow bg-dark-bg border border-neon-green/50 rounded px-2 py-1 text-sm text-white focus:outline-none focus:border-neon-green"
+            />
+            <button
+              onclick="sendMessage()"
+              class="bg-neon-green text-dark-bg px-3 py-1 rounded font-bold hover:bg-neon-blue transition-colors"
+            >
+              <i class="fas fa-paper-plane"></i>
+            </button>
+          </div>
+          <button
+            onclick="sendToWhatsApp()"
+            class="w-full mt-2 bg-green-600 text-white text-xs py-1 rounded hover:bg-green-700 transition-colors"
+          >
+            <i class="fab fa-whatsapp"></i> Continue on WhatsApp
+          </button>
+        </div>
+      </div>
+
+      <button
+        onclick="toggleChat()"
+        id="chat-button"
+        class="w-14 h-14 bg-neon-green rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform animate-bounce"
+      >
+        <i class="fas fa-comment-dots text-dark-bg text-2xl"></i>
+      </button>
     </div>
 
     <!-- Modal for Product/Service Details -->
-    <div id="modal" class="fixed inset-0 bg-black/90 z-[100] hidden flex items-center justify-center p-4">
-        <div class="bg-panel border-2 border-neon-blue rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div id="modal-content">
-                <!-- Dynamic content -->
-            </div>
+    <div
+      id="modal"
+      class="fixed inset-0 bg-black/90 z-[100] hidden flex items-center justify-center p-4"
+    >
+      <div
+        class="bg-panel border-2 border-neon-blue rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+      >
+        <div id="modal-content">
+          <!-- Dynamic content -->
         </div>
+      </div>
     </div>
 
     <script>
-        // Firebase Configuration (Replace with your config)
-        const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "your-app.firebaseapp.com",
-            projectId: "your-project",
-            storageBucket: "your-app.appspot.com",
-            messagingSenderId: "123456789",
-            appId: "1:123456789:web:abc123"
-        };
+      // Firebase Configuration (Replace with your config)
+      const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "your-app.firebaseapp.com",
+        projectId: "your-project",
+        storageBucket: "your-app.appspot.com",
+        messagingSenderId: "123456789",
+        appId: "1:123456789:web:abc123",
+      };
 
-        // Initialize Firebase
-        let db;
-        try {
-            firebase.initializeApp(firebaseConfig);
-            db = firebase.firestore();
-        } catch(e) {
-            console.log("Firebase not configured");
-        }
+      // Initialize Firebase
+      let db;
+      try {
+        firebase.initializeApp(firebaseConfig);
+        db = firebase.firestore();
+      } catch (e) {
+        console.log("Firebase not configured");
+      }
 
-        // Data Structure
-        const appData = {
-            areas: {
-                escape: {
-                    id: 'escape',
-                    name: 'ESCAPE ROOM',
-                    icon: 'fa-door-open',
-                    color: 'neon-pink',
-                    image: 'https://images.unsplash.com/photo-1519074069444-1ba4fff66d16?w=800',
-                    description: 'Vive la aventura definitiva',
-                    items: [
-                        { id: 'esc1', name: 'Misión Espacial', type: 'service', price: '$25', image: 'https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=400', description: 'Escapa de la estación espacial en 60 min' },
-                        { id: 'esc2', name: 'Misterio Medieval', type: 'service', price: '$25', image: 'https://images.unsplash.com/photo-1535905557558-afc4877a26fc?w=400', description: 'Resuelve el enigma del castillo' },
-                        { id: 'esc3', name: 'Laboratorio Zombie', type: 'service', price: '$30', image: 'https://images.unsplash.com/photo-1509248961158-e54f6934749c?w=400', description: 'Sobrevive al apocalipsis' }
-                    ],
-                    gallery: [
-                        'https://images.unsplash.com/photo-1519074069444-1ba4fff66d16?w=400',
-                        'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400'
-                    ]
-                },
-                research: {
-                    id: 'research',
-                    name: 'INVESTIGACIÓN',
-                    icon: 'fa-microchip',
-                    color: 'neon-blue',
-                    image: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800',
-                    description: 'IA y Automatización',
-                    items: [
-                        { id: 'res1', name: 'Auditoría de Seguridad IA', type: 'service', price: 'Consultar', image: 'https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=400', description: 'Análisis de vulnerabilidades con IA' },
-                        { id: 'res2', name: 'Automatización de Procesos', type: 'service', price: 'Consultar', image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400', description: 'Optimización con RPA' },
-                        { id: 'res3', name: 'Software a Medida', type: 'service', price: 'Consultar', image: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=400', description: 'Desarrollo personalizado' }
-                    ]
-                },
-                education: {
-                    id: 'education',
-                    name: 'EDUCACIÓN',
-                    icon: 'fa-graduation-cap',
-                    color: 'neon-green',
-                    image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800',
-                    description: 'Cursos y Eventos',
-                    items: [
-                        { id: 'edu1', name: 'Curso Python IA', type: 'course', price: '$150', image: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400', description: 'Aprende Python aplicado a IA', date: '2026-05-15' },
-                        { id: 'edu2', name: 'Workshop Ciberseguridad', type: 'event', price: '$80', image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=400', description: 'Taller intensivo 2 días', date: '2026-06-01' },
-                        { id: 'edu3', name: 'Bootcamp Full Stack', type: 'course', price: '$500', image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400', description: '12 semanas intensivas', date: '2026-07-01' }
-                    ],
-                    history: [
-                        { id: 'h1', title: 'Curso Unity 2025', date: '2025-12-01', image: 'https://images.unsplash.com/photo-1552820728-8b83bb6b2b0a?w=400' },
-                        { id: 'h2', title: 'Hackathon URBY', date: '2025-11-15', image: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400' }
-                    ]
-                },
-                printing: {
-                    id: 'printing',
-                    name: 'IMPRESIÓN 3D',
-                    icon: 'fa-cube',
-                    color: 'neon-blue',
-                    image: 'https://images.unsplash.com/photo-1631541909061-71e349d1f203?w=800',
-                    description: 'Productos y Servicios',
-                    items: [
-                        { id: 'pr1', name: 'Figura Personalizada', type: 'product', price: '$45', image: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=400', description: 'Impresión 3D de alta calidad' },
-                        { id: 'pr2', name: 'Prototipo Industrial', type: 'service', price: 'Consultar', image: 'https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?w=400', description: 'Prototipado rápido' },
-                        { id: 'pr3', name: 'Llavero Gaming', type: 'product', price: '$15', image: 'https://images.unsplash.com/photo-1616423664045-6c600ad59935?w=400', description: 'Diseños personalizados' }
-                    ],
-                    delivered: [
-                        'https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?w=400',
-                        'https://images.unsplash.com/photo-1611162618071-b392a29154d6?w=400'
-                    ]
-                }
+      // Data Structure
+      const appData = {
+        areas: {
+          escape: {
+            id: "escape",
+            name: "ESCAPE ROOM",
+            icon: "fa-door-open",
+            color: "neon-pink",
+            image:
+              "https://images.unsplash.com/photo-1519074069444-1ba4fff66d16?w=800",
+            description: "Vive la aventura definitiva",
+            items: [
+              {
+                id: "esc1",
+                name: "Misión Espacial",
+                type: "service",
+                price: "$25",
+                image:
+                  "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=400",
+                description: "Escapa de la estación espacial en 60 min",
+              },
+              {
+                id: "esc2",
+                name: "Misterio Medieval",
+                type: "service",
+                price: "$25",
+                image:
+                  "https://images.unsplash.com/photo-1535905557558-afc4877a26fc?w=400",
+                description: "Resuelve el enigma del castillo",
+              },
+              {
+                id: "esc3",
+                name: "Laboratorio Zombie",
+                type: "service",
+                price: "$30",
+                image:
+                  "https://images.unsplash.com/photo-1509248961158-e54f6934749c?w=400",
+                description: "Sobrevive al apocalipsis",
+              },
+            ],
+            gallery: [
+              "https://images.unsplash.com/photo-1519074069444-1ba4fff66d16?w=400",
+              "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400",
+            ],
+          },
+          research: {
+            id: "research",
+            name: "INVESTIGACIÓN",
+            icon: "fa-microchip",
+            color: "neon-blue",
+            image:
+              "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800",
+            description: "IA y Automatización",
+            items: [
+              {
+                id: "res1",
+                name: "Auditoría de Seguridad IA",
+                type: "service",
+                price: "Consultar",
+                image:
+                  "https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=400",
+                description: "Análisis de vulnerabilidades con IA",
+              },
+              {
+                id: "res2",
+                name: "Automatización de Procesos",
+                type: "service",
+                price: "Consultar",
+                image:
+                  "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400",
+                description: "Optimización con RPA",
+              },
+              {
+                id: "res3",
+                name: "Software a Medida",
+                type: "service",
+                price: "Consultar",
+                image:
+                  "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=400",
+                description: "Desarrollo personalizado",
+              },
+            ],
+          },
+          education: {
+            id: "education",
+            name: "EDUCACIÓN",
+            icon: "fa-graduation-cap",
+            color: "neon-green",
+            image:
+              "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800",
+            description: "Cursos y Eventos",
+            items: [
+              {
+                id: "edu1",
+                name: "Curso Python IA",
+                type: "course",
+                price: "$150",
+                image:
+                  "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400",
+                description: "Aprende Python aplicado a IA",
+                date: "2026-05-15",
+              },
+              {
+                id: "edu2",
+                name: "Workshop Ciberseguridad",
+                type: "event",
+                price: "$80",
+                image:
+                  "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=400",
+                description: "Taller intensivo 2 días",
+                date: "2026-06-01",
+              },
+              {
+                id: "edu3",
+                name: "Bootcamp Full Stack",
+                type: "course",
+                price: "$500",
+                image:
+                  "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400",
+                description: "12 semanas intensivas",
+                date: "2026-07-01",
+              },
+            ],
+            history: [
+              {
+                id: "h1",
+                title: "Curso Unity 2025",
+                date: "2025-12-01",
+                image:
+                  "https://images.unsplash.com/photo-1552820728-8b83bb6b2b0a?w=400",
+              },
+              {
+                id: "h2",
+                title: "Hackathon URBY",
+                date: "2025-11-15",
+                image:
+                  "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400",
+              },
+            ],
+          },
+          printing: {
+            id: "printing",
+            name: "IMPRESIÓN 3D",
+            icon: "fa-cube",
+            color: "neon-blue",
+            image:
+              "https://images.unsplash.com/photo-1631541909061-71e349d1f203?w=800",
+            description: "Productos y Servicios",
+            items: [
+              {
+                id: "pr1",
+                name: "Figura Personalizada",
+                type: "product",
+                price: "$45",
+                image:
+                  "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=400",
+                description: "Impresión 3D de alta calidad",
+              },
+              {
+                id: "pr2",
+                name: "Prototipo Industrial",
+                type: "service",
+                price: "Consultar",
+                image:
+                  "https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?w=400",
+                description: "Prototipado rápido",
+              },
+              {
+                id: "pr3",
+                name: "Llavero Gaming",
+                type: "product",
+                price: "$15",
+                image:
+                  "https://images.unsplash.com/photo-1616423664045-6c600ad59935?w=400",
+                description: "Diseños personalizados",
+              },
+            ],
+            delivered: [
+              "https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?w=400",
+              "https://images.unsplash.com/photo-1611162618071-b392a29154d6?w=400",
+            ],
+          },
+        },
+      };
+
+      // Router
+      const router = {
+        currentRoute: {},
+
+        navigate(route, params = {}) {
+          const url = new URL(window.location);
+          if (route === "home") {
+            url.searchParams.delete("area");
+            url.searchParams.delete("serviceId");
+            url.searchParams.delete("productId");
+            url.searchParams.delete("cartId");
+          } else if (route === "area") {
+            url.searchParams.set("area", params.area);
+            if (params.serviceId)
+              url.searchParams.set("serviceId", params.serviceId);
+            if (params.productId)
+              url.searchParams.set("productId", params.productId);
+          }
+
+          window.history.pushState({}, "", url);
+          this.handleRoute();
+        },
+
+        handleRoute() {
+          const params = new URLSearchParams(window.location.search);
+          const area = params.get("area");
+          const serviceId = params.get("serviceId");
+          const productId = params.get("productId");
+          const cartId = params.get("cartId");
+
+          // Auto-open based on params
+          if (serviceId || productId) {
+            this.openItemFromParam(serviceId || productId, area);
+          } else if (cartId) {
+            this.openCart(cartId);
+          } else if (area && appData.areas[area]) {
+            this.showArea(area);
+          } else {
+            this.showHome();
+          }
+
+          // Update navbar
+          this.updateNavbar(area);
+        },
+
+        showHome() {
+          const app = document.getElementById("app");
+          app.innerHTML = this.renderHome();
+          app.classList.remove("fade-in");
+          void app.offsetWidth; // Trigger reflow
+          app.classList.add("fade-in");
+        },
+
+        showArea(areaId) {
+          const area = appData.areas[areaId];
+          if (!area) return this.showHome();
+
+          const app = document.getElementById("app");
+          app.innerHTML = this.renderArea(area);
+          app.classList.remove("fade-in");
+          void app.offsetWidth;
+          app.classList.add("fade-in");
+        },
+
+        openItemFromParam(itemId, areaId) {
+          // Find item in all areas or specific area
+          let item = null;
+          let area = null;
+
+          if (areaId && appData.areas[areaId]) {
+            area = appData.areas[areaId];
+            item = area.items.find((i) => i.id === itemId);
+          } else {
+            // Search all areas
+            for (const a of Object.values(appData.areas)) {
+              item = a.items.find((i) => i.id === itemId);
+              if (item) {
+                area = a;
+                break;
+              }
             }
-        };
+          }
 
-        // Router
-        const router = {
-            currentRoute: {},
-            
-            navigate(route, params = {}) {
-                const url = new URL(window.location);
-                if (route === 'home') {
-                    url.searchParams.delete('area');
-                    url.searchParams.delete('serviceId');
-                    url.searchParams.delete('productId');
-                    url.searchParams.delete('cartId');
-                } else if (route === 'area') {
-                    url.searchParams.set('area', params.area);
-                    if (params.serviceId) url.searchParams.set('serviceId', params.serviceId);
-                    if (params.productId) url.searchParams.set('productId', params.productId);
-                }
-                
-                window.history.pushState({}, '', url);
-                this.handleRoute();
-            },
+          if (item && area) {
+            this.showArea(area.id);
+            setTimeout(() => this.showModal(item), 300);
+          }
+        },
 
-            handleRoute() {
-                const params = new URLSearchParams(window.location.search);
-                const area = params.get('area');
-                const serviceId = params.get('serviceId');
-                const productId = params.get('productId');
-                const cartId = params.get('cartId');
+        openCart(cartId) {
+          // Simulate cart opening
+          alert(`Opening cart: ${cartId}`);
+          this.showHome();
+        },
 
-                // Auto-open based on params
-                if (serviceId || productId) {
-                    this.openItemFromParam(serviceId || productId, area);
-                } else if (cartId) {
-                    this.openCart(cartId);
-                } else if (area && appData.areas[area]) {
-                    this.showArea(area);
-                } else {
-                    this.showHome();
-                }
+        updateNavbar(currentArea) {
+          const navLinks = document.getElementById("nav-links");
+          const mobileNavLinks = document.getElementById("mobile-nav-links");
 
-                // Update navbar
-                this.updateNavbar(area);
-            },
+          let html = "";
+          let mobileHtml = "";
 
-            showHome() {
-                const app = document.getElementById('app');
-                app.innerHTML = this.renderHome();
-                app.classList.remove('fade-in');
-                void app.offsetWidth; // Trigger reflow
-                app.classList.add('fade-in');
-            },
-
-            showArea(areaId) {
-                const area = appData.areas[areaId];
-                if (!area) return this.showHome();
-
-                const app = document.getElementById('app');
-                app.innerHTML = this.renderArea(area);
-                app.classList.remove('fade-in');
-                void app.offsetWidth;
-                app.classList.add('fade-in');
-            },
-
-            openItemFromParam(itemId, areaId) {
-                // Find item in all areas or specific area
-                let item = null;
-                let area = null;
-
-                if (areaId && appData.areas[areaId]) {
-                    area = appData.areas[areaId];
-                    item = area.items.find(i => i.id === itemId);
-                } else {
-                    // Search all areas
-                    for (const a of Object.values(appData.areas)) {
-                        item = a.items.find(i => i.id === itemId);
-                        if (item) {
-                            area = a;
-                            break;
-                        }
-                    }
-                }
-
-                if (item && area) {
-                    this.showArea(area.id);
-                    setTimeout(() => this.showModal(item), 300);
-                }
-            },
-
-            openCart(cartId) {
-                // Simulate cart opening
-                alert(`Opening cart: ${cartId}`);
-                this.showHome();
-            },
-
-            updateNavbar(currentArea) {
-                const navLinks = document.getElementById('nav-links');
-                const mobileNavLinks = document.getElementById('mobile-nav-links');
-                
-                let html = '';
-                let mobileHtml = '';
-
-                if (!currentArea) {
-                    // Home navigation
-                    Object.values(appData.areas).forEach(area => {
-                        html += `
+          if (!currentArea) {
+            // Home navigation
+            Object.values(appData.areas).forEach((area) => {
+              html += `
                             <button onclick="router.navigate('area', {area: '${area.id}'})" 
                                     class="px-4 py-2 text-neon-blue hover:bg-neon-blue/10 border border-transparent hover:border-neon-blue rounded font-game text-xs transition-all">
                                 ${area.name}
                             </button>
                         `;
-                        mobileHtml += html;
-                    });
-                } else {
-                    // Area navigation
-                    const area = appData.areas[currentArea];
-                    html = `
-                        <button onclick="router.navigate('home')" class="px-4 py-2 text-gray-400 hover:text-white transition-colors">
+              mobileHtml += html;
+            });
+          } else {
+            // Area navigation
+            const area = appData.areas[currentArea];
+            html = `
+                        <button onclick="router.navigate('home')" class="px-4 py-2 text-neon-blue hover:border-neon-blue hover:text-neon-blue border border-transparent rounded font-game text-xs transition-colors">
                             <i class="fas fa-arrow-left"></i> VOLVER
                         </button>
                         <span class="px-4 py-2 text-${area.color} font-game text-sm">> ${area.name}</span>
                     `;
-                    mobileHtml = html;
-                }
+            mobileHtml = html;
+          }
 
-                navLinks.innerHTML = html;
-                mobileNavLinks.innerHTML = mobileHtml;
-            },
+          navLinks.innerHTML = html;
+          mobileNavLinks.innerHTML = mobileHtml;
+        },
 
-            renderHome() {
-                return `
+        renderHome() {
+          return `
                     <div class="container mx-auto px-4 py-12">
                         <div class="text-center mb-16">
                             <h1 class="font-game text-3xl md:text-5xl text-neon-blue mb-4 neon-text animate-pulse-glow">
@@ -543,10 +752,13 @@
                             <p class="text-gray-400 font-tech text-lg">Choose your mission</p>
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                            ${Object.values(appData.areas).map(area => `
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 min-h-[200px]">
+                            ${Object.values(appData.areas)
+                              .map(
+                                (area) => `
+                            <!-- Game Card -->
                                 <div onclick="router.navigate('area', {area: '${area.id}'})" 
-                                     class="game-card rounded-lg p-6 cursor-pointer group relative overflow-hidden">
+                                    class="game-card rounded-lg p-6 cursor-pointer group relative overflow-hidden">
                                     <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/80"></div>
                                     <img src="${area.image}" alt="${area.name}" 
                                          class="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-70 transition-opacity">
@@ -554,12 +766,14 @@
                                         <i class="fas ${area.icon} text-${area.color} text-4xl mb-3 group-hover:scale-110 transition-transform"></i>
                                         <h3 class="font-game text-${area.color} text-sm md:text-base mb-2">${area.name}</h3>
                                         <p class="text-gray-300 text-xs">${area.description}</p>
-                                        <div class="mt-4 text-${area.color} text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <button class=" text-${area.color} text-xs text-start font-bold opacity-0 group-hover:opacity-100 transition-opacity">
                                             ENTER >
-                                        </div>
+                                        </button>
                                     </div>
-                                </div>
-                            `).join('')}
+                            </div>
+                            `,
+                              )
+                              .join("")}
                         </div>
 
                         <!-- Featured Section -->
@@ -585,10 +799,10 @@
                         </div>
                     </div>
                 `;
-            },
+        },
 
-            renderArea(area) {
-                return `
+        renderArea(area) {
+          return `
                     <div class="container mx-auto px-4 py-8">
                         <!-- Header -->
                         <div class="relative h-64 md:h-96 rounded-lg overflow-hidden mb-8 border-2 border-${area.color}">
@@ -608,29 +822,37 @@
                                 <i class="fas fa-box-open mr-2"></i> INVENTORY
                             </h2>
                             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                                ${area.items.map(item => `
+                                ${area.items
+                                  .map(
+                                    (item) => `
                                     <div onclick="router.showModal(appData.areas['${area.id}'].items.find(i => i.id === '${item.id}'))"
                                          class="inventory-slot rounded p-3 aspect-square flex flex-col items-center justify-center text-center group">
                                         <img src="${item.image}" alt="${item.name}" class="w-20 h-20 object-cover rounded mb-2 group-hover:scale-110 transition-transform">
                                         <div class="text-${area.color} font-game text-[10px] md:text-xs mb-1">${item.name}</div>
                                         <div class="text-neon-green text-xs font-bold">${item.price}</div>
-                                        ${item.type === 'service' ? '<span class="text-[10px] text-gray-500 mt-1">SERVICE</span>' : 
-                                          item.type === 'course' ? '<span class="text-[10px] text-neon-pink mt-1">COURSE</span>' :
-                                          '<span class="text-[10px] text-neon-blue mt-1">ITEM</span>'}
+                                        ${
+                                          item.type === "service"
+                                            ? '<span class="text-[10px] text-gray-500 mt-1">SERVICE</span>'
+                                            : item.type === "course"
+                                              ? '<span class="text-[10px] text-neon-pink mt-1">COURSE</span>'
+                                              : '<span class="text-[10px] text-neon-blue mt-1">ITEM</span>'
+                                        }
                                     </div>
-                                `).join('')}
+                                `,
+                                  )
+                                  .join("")}
                             </div>
                         </div>
 
-                        ${area.id === 'escape' ? this.renderEscapeRoomDetails(area) : ''}
-                        ${area.id === 'education' ? this.renderEducationSection(area) : ''}
-                        ${area.id === 'printing' ? this.renderPrintingSection(area) : ''}
+                        ${area.id === "escape" ? this.renderEscapeRoomDetails(area) : ""}
+                        ${area.id === "education" ? this.renderEducationSection(area) : ""}
+                        ${area.id === "printing" ? this.renderPrintingSection(area) : ""}
                     </div>
                 `;
-            },
+        },
 
-            renderEscapeRoomDetails(area) {
-                return `
+        renderEscapeRoomDetails(area) {
+          return `
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                         <div class="bg-panel border border-neon-pink/50 rounded-lg p-6">
                             <h3 class="font-game text-neon-pink mb-4">> NEXT SESSION</h3>
@@ -660,17 +882,21 @@
                         <div class="bg-panel border border-neon-pink/50 rounded-lg p-6">
                             <h3 class="font-game text-neon-pink mb-4">> GALLERY</h3>
                             <div class="grid grid-cols-2 gap-2">
-                                ${area.gallery.map(img => `
+                                ${area.gallery
+                                  .map(
+                                    (img) => `
                                     <img src="${img}" class="rounded border border-gray-700 hover:border-neon-pink transition-colors">
-                                `).join('')}
+                                `,
+                                  )
+                                  .join("")}
                             </div>
                         </div>
                     </div>
                 `;
-            },
+        },
 
-            renderEducationSection(area) {
-                return `
+        renderEducationSection(area) {
+          return `
                     <div class="mb-8">
                         <div class="flex justify-between items-center mb-4">
                             <h2 class="font-game text-neon-green text-lg">> HISTORY</h2>
@@ -682,7 +908,9 @@
                         </div>
                         
                         <div id="education-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                            ${area.history.map(item => `
+                            ${area.history
+                              .map(
+                                (item) => `
                                 <div class="bg-dark-bg border border-gray-700 rounded overflow-hidden">
                                     <img src="${item.image}" class="w-full h-32 object-cover">
                                     <div class="p-3">
@@ -690,21 +918,27 @@
                                         <div class="text-xs font-bold">${item.title}</div>
                                     </div>
                                 </div>
-                            `).join('')}
+                            `,
+                              )
+                              .join("")}
                         </div>
                     </div>
                 `;
-            },
+        },
 
-            renderPrintingSection(area) {
-                return `
+        renderPrintingSection(area) {
+          return `
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                         <div>
                             <h3 class="font-game text-neon-blue mb-4">> DELIVERED</h3>
                             <div class="grid grid-cols-3 gap-2">
-                                ${area.delivered.map(img => `
+                                ${area.delivered
+                                  .map(
+                                    (img) => `
                                     <img src="${img}" class="rounded border border-gray-700 hover:border-neon-blue transition-colors cursor-pointer hover:scale-105">
-                                `).join('')}
+                                `,
+                                  )
+                                  .join("")}
                             </div>
                         </div>
                         <div>
@@ -728,13 +962,13 @@
                         </div>
                     </div>
                 `;
-            },
+        },
 
-            showModal(item) {
-                const modal = document.getElementById('modal');
-                const content = document.getElementById('modal-content');
-                
-                content.innerHTML = `
+        showModal(item) {
+          const modal = document.getElementById("modal");
+          const content = document.getElementById("modal-content");
+
+          content.innerHTML = `
                     <div class="relative">
                         <button onclick="document.getElementById('modal').classList.add('hidden')" 
                                 class="absolute top-4 right-4 text-gray-400 hover:text-white z-10">
@@ -751,12 +985,16 @@
                             
                             <p class="text-gray-300 mb-6">${item.description}</p>
                             
-                            ${item.date ? `
+                            ${
+                              item.date
+                                ? `
                                 <div class="bg-panel border border-neon-pink/50 rounded p-4 mb-6">
                                     <div class="text-neon-pink font-game text-xs mb-2">SCHEDULE</div>
                                     <div class="text-white"><i class="far fa-calendar mr-2"></i>${item.date}</div>
                                 </div>
-                            ` : ''}
+                            `
+                                : ""
+                            }
                             
                             <div class="flex space-x-4">
                                 <button onclick="addToCart('${item.id}')" class="flex-1 game-btn text-dark-bg font-bold py-3 rounded">
@@ -769,117 +1007,127 @@
                         </div>
                     </div>
                 `;
-                
-                modal.classList.remove('hidden');
-            }
-        };
 
-        // Global functions
-        function toggleMobileMenu() {
-            const menu = document.getElementById('mobile-menu');
-            menu.classList.toggle('hidden');
-        }
+          modal.classList.remove("hidden");
+        },
+      };
 
-        function toggleChat() {
-            const container = document.getElementById('chat-container');
-            const button = document.getElementById('chat-button');
-            container.classList.toggle('hidden');
-            button.classList.toggle('hidden');
-        }
+      // Global functions
+      function toggleMobileMenu() {
+        const menu = document.getElementById("mobile-menu");
+        menu.classList.toggle("hidden");
+      }
 
-        function sendMessage() {
-            const input = document.getElementById('chat-input');
-            const message = input.value.trim();
-            if (!message || !db) return;
+      function toggleChat() {
+        const container = document.getElementById("chat-container");
+        const button = document.getElementById("chat-button");
+        container.classList.toggle("hidden");
+        button.classList.toggle("hidden");
+      }
 
-            const chatId = localStorage.getItem('chatId') || Date.now().toString();
-            localStorage.setItem('chatId', chatId);
+      function sendMessage() {
+        const input = document.getElementById("chat-input");
+        const message = input.value.trim();
+        if (!message || !db) return;
 
-            db.collection('chats').doc(chatId).collection('messages').add({
-                text: message,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                sender: 'user'
-            });
+        const chatId = localStorage.getItem("chatId") || Date.now().toString();
+        localStorage.setItem("chatId", chatId);
 
-            input.value = '';
-            loadMessages(chatId);
-        }
+        db.collection("chats").doc(chatId).collection("messages").add({
+          text: message,
+          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+          sender: "user",
+        });
 
-        function loadMessages(chatId) {
-            if (!db || !chatId) return;
-            
-            db.collection('chats').doc(chatId).collection('messages')
-                .orderBy('timestamp', 'asc')
-                .onSnapshot(snapshot => {
-                    const container = document.getElementById('chat-messages');
-                    container.innerHTML = snapshot.docs.map(doc => {
-                        const data = doc.data();
-                        const isUser = data.sender === 'user';
-                        return `
-                            <div class="${isUser ? 'text-right' : 'text-left'}">
-                                <div class="inline-block ${isUser ? 'bg-neon-blue text-dark-bg' : 'bg-gray-700 text-white'} 
+        input.value = "";
+        loadMessages(chatId);
+      }
+
+      function loadMessages(chatId) {
+        if (!db || !chatId) return;
+
+        db.collection("chats")
+          .doc(chatId)
+          .collection("messages")
+          .orderBy("timestamp", "asc")
+          .onSnapshot((snapshot) => {
+            const container = document.getElementById("chat-messages");
+            container.innerHTML = snapshot.docs
+              .map((doc) => {
+                const data = doc.data();
+                const isUser = data.sender === "user";
+                return `
+                            <div class="${isUser ? "text-right" : "text-left"}">
+                                <div class="inline-block ${isUser ? "bg-neon-blue text-dark-bg" : "bg-gray-700 text-white"} 
                                             px-3 py-2 rounded text-xs max-w-[80%]">
                                     ${data.text}
                                 </div>
                             </div>
                         `;
-                    }).join('');
-                    container.scrollTop = container.scrollHeight;
-                });
-        }
+              })
+              .join("");
+            container.scrollTop = container.scrollHeight;
+          });
+      }
 
-        function sendToWhatsApp() {
-            const chatId = localStorage.getItem('chatId');
-            const phone = '+1234567890'; // Replace with actual number
-            const message = `Hola URBY LABS! Mi ID de chat es: ${chatId}`;
-            window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
-        }
+      function sendToWhatsApp() {
+        const chatId = localStorage.getItem("chatId");
+        const phone = "+1234567890"; // Replace with actual number
+        const message = `Hola URBY LABS! Mi ID de chat es: ${chatId}`;
+        window.open(
+          `https://wa.me/${phone}?text=${encodeURIComponent(message)}`,
+          "_blank",
+        );
+      }
 
-        function addToCart(itemId) {
-            const cartId = 'cart_' + Date.now();
-            localStorage.setItem('currentCart', cartId);
-            router.navigate('area', { area: 'escape', cartId: cartId });
-            
-            // Show notification
-            const btn = event.target;
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-check mr-2"></i> ADDED!';
-            btn.classList.add('bg-neon-green');
-            setTimeout(() => {
-                btn.innerHTML = originalText;
-                btn.classList.remove('bg-neon-green');
-            }, 2000);
-        }
+      function addToCart(itemId) {
+        const cartId = "cart_" + Date.now();
+        localStorage.setItem("currentCart", cartId);
+        router.navigate("area", { area: "escape", cartId: cartId });
 
-        function shareItem(itemId) {
-            const url = new URL(window.location);
-            url.searchParams.set('productId', itemId);
-            navigator.clipboard.writeText(url.toString());
-            alert('Link copied to clipboard!');
-        }
+        // Show notification
+        const btn = event.target;
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-check mr-2"></i> ADDED!';
+        btn.classList.add("bg-neon-green");
+        setTimeout(() => {
+          btn.innerHTML = originalText;
+          btn.classList.remove("bg-neon-green");
+        }, 2000);
+      }
 
-        function filterEducation(type) {
-            // Implementation for filtering education items
-            const grid = document.getElementById('education-grid');
-            // Add filter logic here
-        }
+      function shareItem(itemId) {
+        const url = new URL(window.location);
+        url.searchParams.set("productId", itemId);
+        navigator.clipboard.writeText(url.toString());
+        alert("Link copied to clipboard!");
+      }
 
-        // Initialize
-        window.addEventListener('load', () => {
-            router.handleRoute();
-            
-            // Listen for popstate (browser back/forward)
-            window.addEventListener('popstate', () => {
-                router.handleRoute();
-            });
+      function filterEducation(type) {
+        // Implementation for filtering education items
+        const grid = document.getElementById("education-grid");
+        // Add filter logic here
+      }
+
+      // Initialize
+      window.addEventListener("load", () => {
+        router.handleRoute();
+
+        // Listen for popstate (browser back/forward)
+        window.addEventListener("popstate", () => {
+          router.handleRoute();
         });
+      });
 
-        // Enter key for chat
-        document.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter' && document.getElementById('chat-input') === document.activeElement) {
-                sendMessage();
-            }
-        });
+      // Enter key for chat
+      document.addEventListener("keypress", (e) => {
+        if (
+          e.key === "Enter" &&
+          document.getElementById("chat-input") === document.activeElement
+        ) {
+          sendMessage();
+        }
+      });
     </script>
-</body>
+  </body>
 </html>
