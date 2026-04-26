@@ -232,10 +232,8 @@
     </style>
     <style type="text/tailwindcss">
       #home{
-        z-index:100;
-        top:0;
         right: 1rem;
-
+        @apply top-0 z-[10] py-12;
         
         .game-card {
           background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
@@ -298,7 +296,7 @@
         }
       }
       .active-section{
-        @apply fixed top-5 left-0 md:left-[-25ch] lg:left-[-25ch] xl:left-[-25ch];
+        @apply fixed top-10 left-0 md:left-[-25ch] lg:left-[-25ch] xl:left-[-25ch];
         div[name=text-call]{
           display: none;
         }
@@ -313,7 +311,12 @@
             @apply ms-0;
           }
           .game-card{
-            @apply w-1/4 md:w-full lg:w-full xl:w-full text-[8px] min-h-[15ch];
+            @apply w-1/4 md:w-full lg:w-full xl:w-full text-[7px] min-h-[15ch];
+            .section-data-content{
+              h3{
+                @apply text-xs md:text-sm lg:text-sm xl:text-sm;
+              }
+            }
           }
         }
         .section-data-content{
@@ -389,7 +392,7 @@
   <main class="pt-20 min-h-screen">
     
     <!-- HOME section -->
-    <section id="home" class="section active py-12">
+    <section id="home" class="section active">
       <div class="text-center mb-16" name="text-call">
         <h1 class="font-game text-3xl md:text-5xl text-neon-blue mb-4 neon-text animate-pulse-glow">SELECT YOUR AREA</h1>
         <p class="text-gray-400 font-tech text-lg">Choose your mission</p>
@@ -681,7 +684,7 @@
   </div>
 
   <!-- ========== CART MODAL (DINÁMICO) ========== -->
-  <div id="cart-modal" class="fixed inset-0 z-50 hidden">
+  <div id="cart-modal" class="fixed inset-0 z-[250] hidden">
     <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="App.UI.closeCart()"></div>
     <div class="relative max-w-md mx-auto mt-20 bg-panel border-2 border-neon-green rounded-lg overflow-hidden">
       <div class="p-4 border-b border-gray-700 flex justify-between items-center">
@@ -702,7 +705,7 @@
   </div>
 
   <!-- ========== CHAT WIDGET (DINÁMICO) ========== -->
-  <div id="chat-container" class="fixed bottom-4 right-4 z-40 hidden">
+  <div id="chat-container" class="fixed bottom-4 right-4 z-[200] hidden">
     <div class="bg-panel border border-neon-blue rounded-lg w-80 shadow-lg">
       <div class="p-3 border-b border-gray-700 flex justify-between items-center">
         <span class="font-game text-neon-blue text-sm">SOPORTE URBY</span>
@@ -872,6 +875,9 @@
     // 🛒 CART MODULE
     // ============================================
     const Cart = {
+      init(app){
+        app.Cart = this
+      },
       add(item) {
         ReactiveStore.update(state => {
           state.cart.items.push({ ...item, addedAt: Date.now() });
@@ -923,6 +929,9 @@
     // 💬 CHAT MODULE
     // ============================================
     const Chat = {
+      init(app){
+        app.Chat = this
+      },
       toggle() {
         document.getElementById('chat-container').classList.toggle('hidden');
         document.getElementById('chat-button').classList.toggle('hidden');
@@ -970,11 +979,12 @@
       home:document.querySelector('#home'),
       navLink:Array.from(document.querySelectorAll('[data-nav]')),
       sections:Array.from(document.querySelectorAll('[id^="section-"]')),
-      init() {
+      init( app ) {
         this._bindNavigation();
         this._bindInventoryClicks();
         this._bindCartButton();
         console.log('🎨 UI Module initialized');
+        app.UI = this;
       },
 
       _bindNavigation() {
@@ -1037,7 +1047,7 @@
         // Manejar URL inicial
         const params = new URLSearchParams(window.location.search);
         const section = params.get('section');
-        if (section && document.getElementById(`section-${section}`)) {
+        if (section && document.getElementById(`${section}`)) {
           navigate(section);
         }
       },
@@ -1098,7 +1108,7 @@
               <p class="text-gray-300 mb-6">${item.desc}</p>
               ${hasDate ? `<div class="bg-panel border border-neon-pink/50 rounded p-4 mb-6"><div class="text-neon-pink font-game text-xs mb-2">SCHEDULE</div><div class="text-white"><i class="far fa-calendar mr-2"></i>${item.date}</div></div>` : ''}
               <div class="flex space-x-4">
-                <button onclick="App.Cart.add(${JSON.stringify(item).replace(/"/g, '&quot;')})" class="flex-1 game-btn text-dark-bg font-bold py-3 rounded"><i class="fas fa-cart-plus mr-2"></i> ADD TO CART</button>
+                <button onclick="App.Cart.add(${JSON.stringify(item).replace(/"/g, '&quot;')})" class="flex-1 game-btn text-dark-bg font-bold py-3 rounded"><i class="fas fa-cart-plus mr-2"></i>Agregar al carrito</button>
                 <button onclick="App.UI.shareItem('${itemId}')" class="px-6 border-2 border-neon-blue text-neon-blue rounded hover:bg-neon-blue hover:text-dark-bg transition-colors"><i class="fas fa-share-alt"></i></button>
               </div>
             </div>
@@ -1107,7 +1117,7 @@
         document.getElementById('modal').classList.remove('hidden');
       },
 
-      closeModal() { document.getElementById('modal').classList.add('hidden'); },
+      closeModal() { document.getElementById('modal')?.classList.add('hidden'); },
       closeCart() { document.getElementById('cart-modal').classList.add('hidden'); },
 
       renderCartItems() {
@@ -1124,7 +1134,7 @@
         container.innerHTML = items.map(item => `
           <div class="flex justify-between items-center bg-dark-bg p-3 rounded">
             <div>
-              <div class="font-bold text-sm">${item.name}</div>
+              <b class="text-white text-sm">${item.name}</b>
               <div class="text-neon-green text-xs">${item.price}</div>
             </div>
             <button onclick="App.Cart.remove('${item.id}')" class="text-neon-pink text-xs hover:underline">✕ Remove</button>
@@ -1166,8 +1176,10 @@
     const App = {
       init() {
         ReactiveStore.init();
-        UI.init();
-        Chat.loadHistory();
+        UI.init(this);
+        Cart.init(this);
+        Chat.init(this)
+        Chat.loadHistory(this);
         
         // Exponer globalmente para handlers inline
         window.App = { ReactiveStore, Cart, Chat, UI };
