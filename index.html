@@ -29,7 +29,7 @@
               tech: ["Rajdhani", "sans-serif"],
             },
             colors: {
-              "neon-blue": "#1b76ee",
+              "neon-blue": "rgb(157 199 255)",
               "neon-pink": "#ff00ff",
               "neon-green": "#00ff88",
               "dark-bg": "#0a0a0f",
@@ -53,7 +53,10 @@
           linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
         background-size: 30px 30px;
       }
-
+      .text-urby{
+        color:rgb(21, 124, 192);
+        font-weight: 600;
+      }
       .scanlines::before {
         content: "";
         position: fixed;
@@ -78,32 +81,6 @@
         /*
             text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor;
             */
-      }
-
-      .game-card {
-        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-        border: 2px solid #00f3ff;
-        box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
-        transition: all 0.3s;
-        i {
-          transition:
-            margin-left 0.3s ease-in-out,
-            height 0.3s ease-in-out;
-        }
-      }
-
-      .game-card:hover {
-        transform: translateY(-15px) scale(1.02);
-        box-shadow: 0 0 30px rgba(0, 243, 255, 0.6);
-        div {
-          background-color: rgba(0, 0, 0, 0.5) !important;
-          padding: 0.5rem;
-          padding-bottom: 1.5rem;
-          border-radius: 1rem;
-        }
-        i {
-          margin-left: 20px;
-        }
       }
 
       .game-btn {
@@ -253,881 +230,954 @@
         background: #0080ff;
       }
     </style>
-  </head>
-  <body class="text-white font-tech scanlines min-h-screen flex flex-col">
-    <!-- Navbar -->
-    <nav
-      id="navbar"
-      class="fixed top-0 w-full bg-white border-b-2 border-neon-blue z-50 backdrop-blur-sm"
-    >
-      <div class="container mx-auto px-4 py-3">
-        <div class="flex justify-between items-center">
-          <div
-            class="flex items-center space-x-4 cursor-pointer"
-            onclick="router.navigate('home')"
-          >
-            <img
-              src="icon.png"
-              alt="URBY LABS"
-              class="w-10 h-10 animate-pulse-glow"
-            />
-            <span
-              class="font-game text-neon-blue text-sm md:text-base neon-text"
-              >URBY LABS</span
-            >
-          </div>
+    <style type="text/tailwindcss">
+      #home{
+        z-index:100;
+        top:0;
+        right: 1rem;
 
-          <div id="nav-links" class="hidden md:flex space-x-2">
-            <!-- Dynamic links -->
-          </div>
-
-          <button onclick="toggleMobileMenu()" class="md:hidden text-neon-blue">
-            <i class="fas fa-bars text-2xl"></i>
-          </button>
-        </div>
-
-        <!-- Mobile Menu -->
-        <div id="mobile-menu" class="hidden md:hidden mt-4 pb-4">
-          <div id="mobile-nav-links" class="flex flex-col space-y-2">
-            <!-- Dynamic mobile links -->
-          </div>
-        </div>
-      </div>
-    </nav>
-
-    <!-- Main Content -->
-    <main id="app" class="flex-grow pt-20 pb-20">
-      <!-- Dynamic content loaded here -->
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-panel border-t-2 border-neon-blue py-8 mt-auto">
-      <div class="container mx-auto px-4">
-        <div class="flex justify-center space-x-6 mb-4">
-          <a
-            href="#"
-            class="text-neon-blue hover:text-neon-pink transition-colors text-2xl"
-          >
-            <i class="fab fa-instagram"></i>
-          </a>
-          <a
-            href="#"
-            class="text-neon-blue hover:text-neon-pink transition-colors text-2xl"
-          >
-            <i class="fab fa-facebook"></i>
-          </a>
-          <a
-            href="#"
-            class="text-neon-blue hover:text-neon-pink transition-colors text-2xl"
-          >
-            <i class="fab fa-twitter"></i>
-          </a>
-          <a
-            href="#"
-            class="text-neon-blue hover:text-neon-pink transition-colors text-2xl"
-          >
-            <i class="fab fa-youtube"></i>
-          </a>
-          <a
-            href="#"
-            class="text-neon-blue hover:text-neon-pink transition-colors text-2xl"
-          >
-            <i class="fab fa-whatsapp"></i>
-          </a>
-        </div>
-        <p class="text-center text-gray-400 font-game text-xs">
-          © 2026 URBY LABS - GAME OVER
-        </p>
-      </div>
-    </footer>
-
-    <!-- Chat Widget -->
-    <div class="chat-widget">
-      <div
-        id="chat-container"
-        class="hidden bg-panel border-2 border-neon-green rounded-lg w-80 h-96 flex flex-col shadow-2xl"
-      >
-        <div
-          class="bg-neon-green/20 border-b-2 border-neon-green p-3 flex justify-between items-center"
-        >
-          <span class="font-game text-neon-green text-xs">SUPPORT CHAT</span>
-          <button
-            onclick="toggleChat()"
-            class="text-neon-green hover:text-white"
-          >
-            <i class="fas fa-times"></i>
-          </button>
-        </div>
-        <div id="chat-messages" class="flex-grow overflow-y-auto p-3 space-y-2">
-          <!-- Messages loaded here -->
-        </div>
-        <div class="p-3 border-t-2 border-neon-green/30">
-          <div class="flex space-x-2">
-            <input
-              type="text"
-              id="chat-input"
-              placeholder="Type message..."
-              class="flex-grow bg-dark-bg border border-neon-green/50 rounded px-2 py-1 text-sm text-white focus:outline-none focus:border-neon-green"
-            />
-            <button
-              onclick="sendMessage()"
-              class="bg-neon-green text-dark-bg px-3 py-1 rounded font-bold hover:bg-neon-blue transition-colors"
-            >
-              <i class="fas fa-paper-plane"></i>
-            </button>
-          </div>
-          <button
-            onclick="sendToWhatsApp()"
-            class="w-full mt-2 bg-green-600 text-white text-xs py-1 rounded hover:bg-green-700 transition-colors"
-          >
-            <i class="fab fa-whatsapp"></i> Continue on WhatsApp
-          </button>
-        </div>
-      </div>
-
-      <button
-        onclick="toggleChat()"
-        id="chat-button"
-        class="w-14 h-14 bg-neon-green rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform animate-bounce"
-      >
-        <i class="fas fa-comment-dots text-dark-bg text-2xl"></i>
-      </button>
-    </div>
-
-    <!-- Modal for Product/Service Details -->
-    <div
-      id="modal"
-      class="fixed inset-0 bg-black/90 z-[100] hidden flex items-center justify-center p-4"
-    >
-      <div
-        class="bg-panel border-2 border-neon-blue rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto"
-      >
-        <div id="modal-content">
-          <!-- Dynamic content -->
-        </div>
-      </div>
-    </div>
-
-    <script>
-      // Firebase Configuration (Replace with your config)
-      const firebaseConfig = {
-        apiKey: "YOUR_API_KEY",
-        authDomain: "your-app.firebaseapp.com",
-        projectId: "your-project",
-        storageBucket: "your-app.appspot.com",
-        messagingSenderId: "123456789",
-        appId: "1:123456789:web:abc123",
-      };
-
-      // Initialize Firebase
-      let db;
-      try {
-        firebase.initializeApp(firebaseConfig);
-        db = firebase.firestore();
-      } catch (e) {
-        console.log("Firebase not configured");
-      }
-
-      // Data Structure
-      const appData = {
-        areas: {
-          escape: {
-            id: "escape",
-            name: "ESCAPE ROOM",
-            icon: "fa-door-open",
-            color: "neon-pink",
-            image:
-              "https://images.unsplash.com/photo-1519074069444-1ba4fff66d16?w=800",
-            description: "Vive la aventura definitiva",
-            items: [
-              {
-                id: "esc1",
-                name: "Misión Espacial",
-                type: "service",
-                price: "$25",
-                image:
-                  "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=400",
-                description: "Escapa de la estación espacial en 60 min",
-              },
-              {
-                id: "esc2",
-                name: "Misterio Medieval",
-                type: "service",
-                price: "$25",
-                image:
-                  "https://images.unsplash.com/photo-1535905557558-afc4877a26fc?w=400",
-                description: "Resuelve el enigma del castillo",
-              },
-              {
-                id: "esc3",
-                name: "Laboratorio Zombie",
-                type: "service",
-                price: "$30",
-                image:
-                  "https://images.unsplash.com/photo-1509248961158-e54f6934749c?w=400",
-                description: "Sobrevive al apocalipsis",
-              },
-            ],
-            gallery: [
-              "https://images.unsplash.com/photo-1519074069444-1ba4fff66d16?w=400",
-              "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400",
-            ],
-          },
-          research: {
-            id: "research",
-            name: "INVESTIGACIÓN",
-            icon: "fa-microchip",
-            color: "neon-blue",
-            image:
-              "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800",
-            description: "IA y Automatización",
-            items: [
-              {
-                id: "res1",
-                name: "Auditoría de Seguridad IA",
-                type: "service",
-                price: "Consultar",
-                image:
-                  "https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=400",
-                description: "Análisis de vulnerabilidades con IA",
-              },
-              {
-                id: "res2",
-                name: "Automatización de Procesos",
-                type: "service",
-                price: "Consultar",
-                image:
-                  "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400",
-                description: "Optimización con RPA",
-              },
-              {
-                id: "res3",
-                name: "Software a Medida",
-                type: "service",
-                price: "Consultar",
-                image:
-                  "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=400",
-                description: "Desarrollo personalizado",
-              },
-            ],
-          },
-          education: {
-            id: "education",
-            name: "EDUCACIÓN",
-            icon: "fa-graduation-cap",
-            color: "neon-green",
-            image:
-              "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800",
-            description: "Cursos y Eventos",
-            items: [
-              {
-                id: "edu1",
-                name: "Curso Python IA",
-                type: "course",
-                price: "$150",
-                image:
-                  "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400",
-                description: "Aprende Python aplicado a IA",
-                date: "2026-05-15",
-              },
-              {
-                id: "edu2",
-                name: "Workshop Ciberseguridad",
-                type: "event",
-                price: "$80",
-                image:
-                  "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=400",
-                description: "Taller intensivo 2 días",
-                date: "2026-06-01",
-              },
-              {
-                id: "edu3",
-                name: "Bootcamp Full Stack",
-                type: "course",
-                price: "$500",
-                image:
-                  "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400",
-                description: "12 semanas intensivas",
-                date: "2026-07-01",
-              },
-            ],
-            history: [
-              {
-                id: "h1",
-                title: "Curso Unity 2025",
-                date: "2025-12-01",
-                image:
-                  "https://images.unsplash.com/photo-1552820728-8b83bb6b2b0a?w=400",
-              },
-              {
-                id: "h2",
-                title: "Hackathon URBY",
-                date: "2025-11-15",
-                image:
-                  "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400",
-              },
-            ],
-          },
-          printing: {
-            id: "printing",
-            name: "IMPRESIÓN 3D",
-            icon: "fa-cube",
-            color: "neon-blue",
-            image:
-              "https://images.unsplash.com/photo-1631541909061-71e349d1f203?w=800",
-            description: "Productos y Servicios",
-            items: [
-              {
-                id: "pr1",
-                name: "Figura Personalizada",
-                type: "product",
-                price: "$45",
-                image:
-                  "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=400",
-                description: "Impresión 3D de alta calidad",
-              },
-              {
-                id: "pr2",
-                name: "Prototipo Industrial",
-                type: "service",
-                price: "Consultar",
-                image:
-                  "https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?w=400",
-                description: "Prototipado rápido",
-              },
-              {
-                id: "pr3",
-                name: "Llavero Gaming",
-                type: "product",
-                price: "$15",
-                image:
-                  "https://images.unsplash.com/photo-1616423664045-6c600ad59935?w=400",
-                description: "Diseños personalizados",
-              },
-            ],
-            delivered: [
-              "https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?w=400",
-              "https://images.unsplash.com/photo-1611162618071-b392a29154d6?w=400",
-            ],
-          },
-        },
-      };
-
-      // Router
-      const router = {
-        currentRoute: {},
-
-        navigate(route, params = {}) {
-          const url = new URL(window.location);
-          if (route === "home") {
-            url.searchParams.delete("area");
-            url.searchParams.delete("serviceId");
-            url.searchParams.delete("productId");
-            url.searchParams.delete("cartId");
-          } else if (route === "area") {
-            url.searchParams.set("area", params.area);
-            if (params.serviceId)
-              url.searchParams.set("serviceId", params.serviceId);
-            if (params.productId)
-              url.searchParams.set("productId", params.productId);
+        
+        .game-card {
+          background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+          border: 2px solid #00f3ff;
+          box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
+          transition: all 0.3s;
+          i {
+            transition:
+              margin-left 0.3s ease-in-out,
+              height 0.3s ease-in-out;
           }
-
-          window.history.pushState({}, "", url);
-          this.handleRoute();
-        },
-
-        handleRoute() {
-          const params = new URLSearchParams(window.location.search);
-          const area = params.get("area");
-          const serviceId = params.get("serviceId");
-          const productId = params.get("productId");
-          const cartId = params.get("cartId");
-
-          // Auto-open based on params
-          if (serviceId || productId) {
-            this.openItemFromParam(serviceId || productId, area);
-          } else if (cartId) {
-            this.openCart(cartId);
-          } else if (area && appData.areas[area]) {
-            this.showArea(area);
-          } else {
-            this.showHome();
-          }
-
-          // Update navbar
-          this.updateNavbar(area);
-        },
-
-        showHome() {
-          const app = document.getElementById("app");
-          app.innerHTML = this.renderHome();
-          app.classList.remove("fade-in");
-          void app.offsetWidth; // Trigger reflow
-          app.classList.add("fade-in");
-        },
-
-        showArea(areaId) {
-          const area = appData.areas[areaId];
-          if (!area) return this.showHome();
-
-          const app = document.getElementById("app");
-          app.innerHTML = this.renderArea(area);
-          app.classList.remove("fade-in");
-          void app.offsetWidth;
-          app.classList.add("fade-in");
-        },
-
-        openItemFromParam(itemId, areaId) {
-          // Find item in all areas or specific area
-          let item = null;
-          let area = null;
-
-          if (areaId && appData.areas[areaId]) {
-            area = appData.areas[areaId];
-            item = area.items.find((i) => i.id === itemId);
-          } else {
-            // Search all areas
-            for (const a of Object.values(appData.areas)) {
-              item = a.items.find((i) => i.id === itemId);
-              if (item) {
-                area = a;
-                break;
-              }
-            }
-          }
-
-          if (item && area) {
-            this.showArea(area.id);
-            setTimeout(() => this.showModal(item), 300);
-          }
-        },
-
-        openCart(cartId) {
-          // Simulate cart opening
-          alert(`Opening cart: ${cartId}`);
-          this.showHome();
-        },
-
-        updateNavbar(currentArea) {
-          const navLinks = document.getElementById("nav-links");
-          const mobileNavLinks = document.getElementById("mobile-nav-links");
-
-          let html = "";
-          let mobileHtml = "";
-
-          if (!currentArea) {
-            // Home navigation
-            Object.values(appData.areas).forEach((area) => {
-              html += `
-                            <button onclick="router.navigate('area', {area: '${area.id}'})" 
-                                    class="px-4 py-2 text-neon-blue hover:bg-neon-blue/10 border border-transparent hover:border-neon-blue rounded font-game text-xs transition-all">
-                                ${area.name}
-                            </button>
-                        `;
-              mobileHtml += html;
-            });
-          } else {
-            // Area navigation
-            const area = appData.areas[currentArea];
-            html = `
-                        <button onclick="router.navigate('home')" class="px-4 py-2 text-neon-blue hover:border-neon-blue hover:text-neon-blue border border-transparent rounded font-game text-xs transition-colors">
-                            <i class="fas fa-arrow-left"></i> VOLVER
-                        </button>
-                        <span class="px-4 py-2 text-${area.color} font-game text-sm">> ${area.name}</span>
-                    `;
-            mobileHtml = html;
-          }
-
-          navLinks.innerHTML = html;
-          mobileNavLinks.innerHTML = mobileHtml;
-        },
-
-        renderHome() {
-          return `
-                    <div class="container mx-auto px-4 py-12">
-                        <div class="text-center mb-16">
-                            <h1 class="font-game text-3xl md:text-5xl text-neon-blue mb-4 neon-text animate-pulse-glow">
-                                SELECT YOUR AREA
-                            </h1>
-                            <p class="text-gray-400 font-tech text-lg">Choose your mission</p>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 min-h-[200px]">
-                            ${Object.values(appData.areas)
-                              .map(
-                                (area) => `
-                            <!-- Game Card -->
-                                <div onclick="router.navigate('area', {area: '${area.id}'})" 
-                                    class="game-card rounded-lg p-6 cursor-pointer group relative overflow-hidden">
-                                    <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/80"></div>
-                                    <img src="${area.image}" alt="${area.name}" 
-                                         class="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-70 transition-opacity">
-                                    <div class="relative z-10 h-full flex flex-col justify-end">
-                                        <i class="fas ${area.icon} text-${area.color} text-4xl mb-3 group-hover:scale-110 transition-transform"></i>
-                                        <h3 class="font-game text-${area.color} text-sm md:text-base mb-2">${area.name}</h3>
-                                        <p class="text-gray-300 text-xs">${area.description}</p>
-                                        <button class=" text-${area.color} text-xs text-start font-bold opacity-0 group-hover:opacity-100 transition-opacity">
-                                            ENTER >
-                                        </button>
-                                    </div>
-                            </div>
-                            `,
-                              )
-                              .join("")}
-                        </div>
-
-                        <!-- Featured Section -->
-                        <div class="mt-16 border-2 border-neon-blue/30 rounded-lg p-8 bg-panel/50">
-                            <h2 class="font-game text-neon-pink text-xl mb-6 text-center">> NEXT EVENTS <</h2>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div class="bg-dark-bg border border-neon-green/50 p-4 rounded">
-                                    <div class="text-neon-green font-game text-xs mb-2">MAY 15, 2026</div>
-                                    <h3 class="font-bold text-lg mb-2">Curso Python IA</h3>
-                                    <p class="text-gray-400 text-sm">Inicia tu camino en Inteligencia Artificial</p>
-                                </div>
-                                <div class="bg-dark-bg border border-neon-pink/50 p-4 rounded">
-                                    <div class="text-neon-pink font-game text-xs mb-2">JUN 01, 2026</div>
-                                    <h3 class="font-bold text-lg mb-2">Hackathon URBY</h3>
-                                    <p class="text-gray-400 text-sm">48 horas de código y diversión</p>
-                                </div>
-                                <div class="bg-dark-bg border border-neon-blue/50 p-4 rounded">
-                                    <div class="text-neon-blue font-game text-xs mb-2">EVERY WEEKEND</div>
-                                    <h3 class="font-bold text-lg mb-2">Escape Room</h3>
-                                    <p class="text-gray-400 text-sm">Nuevas temáticas cada mes</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-        },
-
-        renderArea(area) {
-          return `
-                    <div class="container mx-auto px-4 py-8">
-                        <!-- Header -->
-                        <div class="relative h-64 md:h-96 rounded-lg overflow-hidden mb-8 border-2 border-${area.color}">
-                            <img src="${area.image}" class="w-full h-full object-cover" alt="${area.name}">
-                            <div class="absolute inset-0 bg-gradient-to-t from-dark-bg via-dark-bg/50 to-transparent"></div>
-                            <div class="absolute bottom-0 left-0 p-6">
-                                <h1 class="font-game text-3xl md:text-5xl text-${area.color} mb-2 neon-text">
-                                    ${area.name}
-                                </h1>
-                                <p class="text-xl text-gray-300">${area.description}</p>
-                            </div>
-                        </div>
-
-                        <!-- Inventory Grid -->
-                        <div class="mb-8">
-                            <h2 class="font-game text-${area.color} text-lg mb-4 flex items-center">
-                                <i class="fas fa-box-open mr-2"></i> INVENTORY
-                            </h2>
-                            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                                ${area.items
-                                  .map(
-                                    (item) => `
-                                    <div onclick="router.showModal(appData.areas['${area.id}'].items.find(i => i.id === '${item.id}'))"
-                                         class="inventory-slot rounded p-3 aspect-square flex flex-col items-center justify-center text-center group">
-                                        <img src="${item.image}" alt="${item.name}" class="w-20 h-20 object-cover rounded mb-2 group-hover:scale-110 transition-transform">
-                                        <div class="text-${area.color} font-game text-[10px] md:text-xs mb-1">${item.name}</div>
-                                        <div class="text-neon-green text-xs font-bold">${item.price}</div>
-                                        ${
-                                          item.type === "service"
-                                            ? '<span class="text-[10px] text-gray-500 mt-1">SERVICE</span>'
-                                            : item.type === "course"
-                                              ? '<span class="text-[10px] text-neon-pink mt-1">COURSE</span>'
-                                              : '<span class="text-[10px] text-neon-blue mt-1">ITEM</span>'
-                                        }
-                                    </div>
-                                `,
-                                  )
-                                  .join("")}
-                            </div>
-                        </div>
-
-                        ${area.id === "escape" ? this.renderEscapeRoomDetails(area) : ""}
-                        ${area.id === "education" ? this.renderEducationSection(area) : ""}
-                        ${area.id === "printing" ? this.renderPrintingSection(area) : ""}
-                    </div>
-                `;
-        },
-
-        renderEscapeRoomDetails(area) {
-          return `
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                        <div class="bg-panel border border-neon-pink/50 rounded-lg p-6">
-                            <h3 class="font-game text-neon-pink mb-4">> NEXT SESSION</h3>
-                            <div class="space-y-3 text-sm">
-                                <div class="flex justify-between border-b border-gray-700 pb-2">
-                                    <span class="text-gray-400">Date:</span>
-                                    <span class="text-white">April 26, 2026</span>
-                                </div>
-                                <div class="flex justify-between border-b border-gray-700 pb-2">
-                                    <span class="text-gray-400">Time:</span>
-                                    <span class="text-white">15:00 - 17:00</span>
-                                </div>
-                                <div class="flex justify-between border-b border-gray-700 pb-2">
-                                    <span class="text-gray-400">Theme:</span>
-                                    <span class="text-neon-pink">Misión Espacial</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span class="text-gray-400">Price:</span>
-                                    <span class="text-neon-green font-bold">$25/person</span>
-                                </div>
-                            </div>
-                            <button class="w-full mt-4 game-btn text-dark-bg font-bold py-3 rounded">
-                                BOOK NOW
-                            </button>
-                        </div>
-                        
-                        <div class="bg-panel border border-neon-pink/50 rounded-lg p-6">
-                            <h3 class="font-game text-neon-pink mb-4">> GALLERY</h3>
-                            <div class="grid grid-cols-2 gap-2">
-                                ${area.gallery
-                                  .map(
-                                    (img) => `
-                                    <img src="${img}" class="rounded border border-gray-700 hover:border-neon-pink transition-colors">
-                                `,
-                                  )
-                                  .join("")}
-                            </div>
-                        </div>
-                    </div>
-                `;
-        },
-
-        renderEducationSection(area) {
-          return `
-                    <div class="mb-8">
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="font-game text-neon-green text-lg">> HISTORY</h2>
-                            <div class="flex space-x-2">
-                                <button onclick="filterEducation('all')" class="px-3 py-1 text-xs border border-neon-green text-neon-green hover:bg-neon-green hover:text-dark-bg transition-colors rounded">ALL</button>
-                                <button onclick="filterEducation('course')" class="px-3 py-1 text-xs border border-gray-600 text-gray-400 hover:border-neon-green hover:text-neon-green transition-colors rounded">COURSES</button>
-                                <button onclick="filterEducation('event')" class="px-3 py-1 text-xs border border-gray-600 text-gray-400 hover:border-neon-green hover:text-neon-green transition-colors rounded">EVENTS</button>
-                            </div>
-                        </div>
-                        
-                        <div id="education-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                            ${area.history
-                              .map(
-                                (item) => `
-                                <div class="bg-dark-bg border border-gray-700 rounded overflow-hidden">
-                                    <img src="${item.image}" class="w-full h-32 object-cover">
-                                    <div class="p-3">
-                                        <div class="text-neon-green text-[10px] mb-1">${item.date}</div>
-                                        <div class="text-xs font-bold">${item.title}</div>
-                                    </div>
-                                </div>
-                            `,
-                              )
-                              .join("")}
-                        </div>
-                    </div>
-                `;
-        },
-
-        renderPrintingSection(area) {
-          return `
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                        <div>
-                            <h3 class="font-game text-neon-blue mb-4">> DELIVERED</h3>
-                            <div class="grid grid-cols-3 gap-2">
-                                ${area.delivered
-                                  .map(
-                                    (img) => `
-                                    <img src="${img}" class="rounded border border-gray-700 hover:border-neon-blue transition-colors cursor-pointer hover:scale-105">
-                                `,
-                                  )
-                                  .join("")}
-                            </div>
-                        </div>
-                        <div>
-                            <h3 class="font-game text-neon-blue mb-4">> CATALOG</h3>
-                            <div class="space-y-2">
-                                <div class="bg-dark-bg border border-gray-700 p-3 rounded flex justify-between items-center">
-                                    <div>
-                                        <div class="font-bold text-sm">Figuras Personalizadas</div>
-                                        <div class="text-xs text-gray-400">Desde $45</div>
-                                    </div>
-                                    <button class="text-neon-blue text-xs border border-neon-blue px-3 py-1 rounded hover:bg-neon-blue hover:text-dark-bg transition-colors">ORDER</button>
-                                </div>
-                                <div class="bg-dark-bg border border-gray-700 p-3 rounded flex justify-between items-center">
-                                    <div>
-                                        <div class="font-bold text-sm">Prototipos</div>
-                                        <div class="text-xs text-gray-400">Cotizar</div>
-                                    </div>
-                                    <button class="text-neon-blue text-xs border border-neon-blue px-3 py-1 rounded hover:bg-neon-blue hover:text-dark-bg transition-colors">ORDER</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-        },
-
-        showModal(item) {
-          const modal = document.getElementById("modal");
-          const content = document.getElementById("modal-content");
-
-          content.innerHTML = `
-                    <div class="relative">
-                        <button onclick="document.getElementById('modal').classList.add('hidden')" 
-                                class="absolute top-4 right-4 text-gray-400 hover:text-white z-10">
-                            <i class="fas fa-times text-2xl"></i>
-                        </button>
-                        
-                        <img src="${item.image}" class="w-full h-64 object-cover rounded-t-lg" alt="${item.name}">
-                        
-                        <div class="p-6">
-                            <div class="flex justify-between items-start mb-4">
-                                <h2 class="font-game text-2xl text-neon-blue">${item.name}</h2>
-                                <span class="bg-neon-green text-dark-bg px-3 py-1 rounded font-bold">${item.price}</span>
-                            </div>
-                            
-                            <p class="text-gray-300 mb-6">${item.description}</p>
-                            
-                            ${
-                              item.date
-                                ? `
-                                <div class="bg-panel border border-neon-pink/50 rounded p-4 mb-6">
-                                    <div class="text-neon-pink font-game text-xs mb-2">SCHEDULE</div>
-                                    <div class="text-white"><i class="far fa-calendar mr-2"></i>${item.date}</div>
-                                </div>
-                            `
-                                : ""
-                            }
-                            
-                            <div class="flex space-x-4">
-                                <button onclick="addToCart('${item.id}')" class="flex-1 game-btn text-dark-bg font-bold py-3 rounded">
-                                    <i class="fas fa-cart-plus mr-2"></i> ADD TO CART
-                                </button>
-                                <button onclick="shareItem('${item.id}')" class="px-6 border-2 border-neon-blue text-neon-blue rounded hover:bg-neon-blue hover:text-dark-bg transition-colors">
-                                    <i class="fas fa-share-alt"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-
-          modal.classList.remove("hidden");
-        },
-      };
-
-      // Global functions
-      function toggleMobileMenu() {
-        const menu = document.getElementById("mobile-menu");
-        menu.classList.toggle("hidden");
-      }
-
-      function toggleChat() {
-        const container = document.getElementById("chat-container");
-        const button = document.getElementById("chat-button");
-        container.classList.toggle("hidden");
-        button.classList.toggle("hidden");
-      }
-
-      function sendMessage() {
-        const input = document.getElementById("chat-input");
-        const message = input.value.trim();
-        if (!message || !db) return;
-
-        const chatId = localStorage.getItem("chatId") || Date.now().toString();
-        localStorage.setItem("chatId", chatId);
-
-        db.collection("chats").doc(chatId).collection("messages").add({
-          text: message,
-          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-          sender: "user",
-        });
-
-        input.value = "";
-        loadMessages(chatId);
-      }
-
-      function loadMessages(chatId) {
-        if (!db || !chatId) return;
-
-        db.collection("chats")
-          .doc(chatId)
-          .collection("messages")
-          .orderBy("timestamp", "asc")
-          .onSnapshot((snapshot) => {
-            const container = document.getElementById("chat-messages");
-            container.innerHTML = snapshot.docs
-              .map((doc) => {
-                const data = doc.data();
-                const isUser = data.sender === "user";
-                return `
-                            <div class="${isUser ? "text-right" : "text-left"}">
-                                <div class="inline-block ${isUser ? "bg-neon-blue text-dark-bg" : "bg-gray-700 text-white"} 
-                                            px-3 py-2 rounded text-xs max-w-[80%]">
-                                    ${data.text}
-                                </div>
-                            </div>
-                        `;
-              })
-              .join("");
-            container.scrollTop = container.scrollHeight;
-          });
-      }
-
-      function sendToWhatsApp() {
-        const chatId = localStorage.getItem("chatId");
-        const phone = "+1234567890"; // Replace with actual number
-        const message = `Hola URBY LABS! Mi ID de chat es: ${chatId}`;
-        window.open(
-          `https://wa.me/${phone}?text=${encodeURIComponent(message)}`,
-          "_blank",
-        );
-      }
-
-      function addToCart(itemId) {
-        const cartId = "cart_" + Date.now();
-        localStorage.setItem("currentCart", cartId);
-        router.navigate("area", { area: "escape", cartId: cartId });
-
-        // Show notification
-        const btn = event.target;
-        const originalText = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-check mr-2"></i> ADDED!';
-        btn.classList.add("bg-neon-green");
-        setTimeout(() => {
-          btn.innerHTML = originalText;
-          btn.classList.remove("bg-neon-green");
-        }, 2000);
-      }
-
-      function shareItem(itemId) {
-        const url = new URL(window.location);
-        url.searchParams.set("productId", itemId);
-        navigator.clipboard.writeText(url.toString());
-        alert("Link copied to clipboard!");
-      }
-
-      function filterEducation(type) {
-        // Implementation for filtering education items
-        const grid = document.getElementById("education-grid");
-        // Add filter logic here
-      }
-
-      // Initialize
-      window.addEventListener("load", () => {
-        router.handleRoute();
-
-        // Listen for popstate (browser back/forward)
-        window.addEventListener("popstate", () => {
-          router.handleRoute();
-        });
-      });
-
-      // Enter key for chat
-      document.addEventListener("keypress", (e) => {
-        if (
-          e.key === "Enter" &&
-          document.getElementById("chat-input") === document.activeElement
-        ) {
-          sendMessage();
         }
-      });
-    </script>
-  </body>
+
+        .game-card:hover {
+          transform: translateY(-15px) scale(1.02);
+          box-shadow: 0 0 30px rgba(0, 243, 255, 0.6);
+          div {
+            background-color: rgba(0, 0, 0, 0.5) !important;
+            padding: 0.5rem;
+            padding-bottom: 1.5rem;
+            border-radius: 1rem;
+          }
+          i {
+            margin-left: 20px;
+          }
+        }
+      }
+      .grid-home{
+        @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 lg:gap-6 xl:gap-6 min-h-[30ch];
+      }
+      .custom-nav{
+        opacity: 0;
+        @apply hidden md:flex space-x-1;
+        &.mobile{
+          @apply flex flex-col p-4 space-y-2
+        }
+        .custom-button-nav{
+          @apply px-4 py-2 text-neon-blue hover:bg-neon-blue/10 border border-transparent hover:border-neon-blue rounded font-game text-xs transition-all;
+
+          &.mobile{
+            @apply text-left px-4 py-2 text-neon-blue bg-neon-blue/10 rounded font-game text-xs
+          }
+        }
+      }
+      .section {
+        z-index: 5;
+        @apply relative container mx-auto px-4 py-8 hidden;
+
+        &.active { 
+          @apply grid w-[90vw] md:w-[calc(100vw-30ch)] lg:w-[calc(100vw-30ch)] xl:w-[calc(100vw-30ch)];
+        }
+      }
+      .section-data-content{
+        @apply relative z-10 h-full flex flex-col justify-end;
+        h3{
+          @apply text-sm md:text-base mb-2;
+        }
+        i {
+          @apply text-4xl mb-3 group-hover:scale-110 transition-transform;
+        }
+      }
+      .active-section{
+        @apply fixed top-5 left-0 md:left-[-25ch] lg:left-[-25ch] xl:left-[-25ch];
+        div[name=text-call]{
+          display: none;
+        }
+        div[name=events]{
+          display: none;
+        }
+        .grid-home{
+          z-index: 10;
+          transition: margin-left 0.3s ease-in-out;
+          @apply absolute flex md:flex-col lg:flex-col xl:flex-col start-0 top-20 -ms-3 gap-1 max-w-[100vw];
+          &:hover{
+            @apply ms-0;
+          }
+          .game-card{
+            @apply w-1/4 md:w-full lg:w-full xl:w-full text-[8px] min-h-[15ch];
+          }
+        }
+        .section-data-content{
+          @apply flex items-center justify-center w-full md:w-[25ch] lg:w-[25ch] xl:w-[25ch] relative;
+          h3{
+            @apply w-fit;
+          }
+          p{
+            @apply hidden;
+          }
+          i{
+            @apply absolute text-sm w-fit  -bottom-3 end-2;
+          }
+        }
+        .game-card:hover {
+          .section-data-content{
+            transform: none !important;
+          }
+          div {
+            padding: 0px !important;
+          }
+        }
+        [data-section]{
+          @apply h-[10ch] p-2;
+        }
+      }
+    </style>
+</head>
+<body class="min-h-screen">
+
+  <!-- ========== NAVIGATION (ESTÁTICA) ========== -->
+  <nav class="fixed top-0 w-full z-50 bg-white backdrop-blur border-b border-neon-blue/30">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+      <div class="flex items-center space-x-2">
+        <img src="icon.png" class="block w-10 h-10 rounded-full">
+        <span class="font-game text-urby text-lg ">URBY LABS</span>
+      </div>
+      
+      <!-- Nav Links Desktop -->
+      <div id="nav-links" class="custom-nav">
+        <button data-nav="home" class="custom-button-nav">HOME</button>
+        <button data-nav="section-escape" class="custom-button-nav">ESCAPE ROOM</button>
+        <button data-nav="section-research" class="custom-button-nav">INVESTIGACIÓN</button>
+        <button data-nav="section-education" class="custom-button-nav">EDUCACIÓN</button>
+        <button data-nav="section-printing" class="custom-button-nav">IMPRESIÓN 3D</button>
+      </div>
+      
+      <!-- Acciones -->
+      <div class="flex items-center space-x-3">
+        <button id="cart-btn" class="relative p-2 hover:text-neon-blue transition-colors">
+          <i class="fas fa-shopping-cart"></i>
+          <span id="cart-badge" class="absolute -top-1 -right-1 bg-neon-pink text-dark-bg text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold hidden">0</span>
+        </button>
+        <button onclick="App.UI.toggleMobileMenu()" class="md:hidden p-2 hover:text-neon-blue">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+    </div>
+    
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden md:hidden bg-panel border-t border-gray-700">
+      <div class="custom-nav mobile">
+        <button data-nav="home" class="custom-button-nav mobile">HOME</button>
+        <button data-nav="section-escape" class="custom-button-nav mobile">ESCAPE ROOM</button>
+        <button data-nav="section-research" class="custom-button-nav mobile">INVESTIGACIÓN</button>
+        <button data-nav="section-education" class="custom-button-nav mobile">EDUCACIÓN</button>
+        <button data-nav="section-printing" class="custom-button-nav mobile">IMPRESIÓN 3D</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ========== SECCIONES ESTÁTICAS (HTML FIJO) ========== -->
+  <main class="pt-20 min-h-screen">
+    
+    <!-- HOME section -->
+    <section id="home" class="section active py-12">
+      <div class="text-center mb-16" name="text-call">
+        <h1 class="font-game text-3xl md:text-5xl text-neon-blue mb-4 neon-text animate-pulse-glow">SELECT YOUR AREA</h1>
+        <p class="text-gray-400 font-tech text-lg">Choose your mission</p>
+      </div>
+
+      <div class="grid-home">
+        <!-- Escape Room Card -->
+        <div data-section="section-escape" class="game-card rounded-lg p-6 group relative overflow-hidden">
+          <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/80"></div>
+          <img src="https://images.unsplash.com/photo-1519074069444-1ba4fff66d16?w=800" alt="ESCAPE ROOM" class="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-70 transition-opacity">
+          <div class="section-data-content">
+            <i class="fas fa-door-open text-neon-pink "></i>
+            <h3 class="text-neon-pink ">ESCAPE ROOM</h3>
+            <p class="text-gray-300 text-xs">Vive la aventura definitiva</p>
+          </div>
+        </div>
+
+        <!-- Research Card -->
+        <div data-section="section-research" class="game-card rounded-lg p-6 group relative overflow-hidden">
+          <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/80"></div>
+          <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800" alt="INVESTIGACIÓN" class="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-70 transition-opacity">
+          <div class="section-data-content">
+            <i class="fas fa-microchip text-neon-blue "></i>
+            <h3 class="text-neon-blue ">INVESTIGACIÓN</h3>
+            <p class="text-gray-300 text-xs">IA y Automatización</p>
+          </div>
+        </div>
+
+        <!-- Education Card -->
+        <div data-section="section-education" class="game-card rounded-lg p-6 group relative overflow-hidden">
+          <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/80"></div>
+          <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800" alt="EDUCACIÓN" class="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-70 transition-opacity">
+          <div class="section-data-content">
+            <i class="fas fa-graduation-cap text-neon-green "></i>
+            <h3 class="text-neon-green ">EDUCACIÓN</h3>
+            <p class="text-gray-300 text-xs">Cursos y Eventos</p>
+          </div>
+        </div>
+
+        <!-- Printing Card -->
+        <div data-section="section-printing" class="game-card rounded-lg p-6 group relative overflow-hidden">
+          <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/80"></div>
+          <img src="https://images.unsplash.com/photo-1631541909061-71e349d1f203?w=800" alt="IMPRESIÓN 3D" class="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-70 transition-opacity">
+          <div class="section-data-content">
+            <i class="fas fa-cube text-neon-blue "></i>
+            <h3 class="text-neon-blue ">IMPRESIÓN 3D</h3>
+            <p class="text-gray-300 text-xs">Productos y Servicios</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Featured Events (estático, se puede actualizar vía JS si se desea) -->
+      <div name="events" class=" mt-16 border-2 border-neon-blue/30 rounded-lg p-8 bg-panel/50">
+        <h2 class="font-game text-neon-pink text-xl mb-6 text-center">> NEXT EVENTS <</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="bg-dark-bg border border-neon-green/50 p-4 rounded">
+            <div class="text-neon-green font-game text-xs mb-2">MAY 15, 2026</div>
+            <h3 class="font-bold text-lg mb-2">Curso Python IA</h3>
+            <p class="text-gray-400 text-sm">Inicia tu camino en Inteligencia Artificial</p>
+          </div>
+          <div class="bg-dark-bg border border-neon-pink/50 p-4 rounded">
+            <div class="text-neon-pink font-game text-xs mb-2">JUN 01, 2026</div>
+            <h3 class="font-bold text-lg mb-2">Hackathon URBY</h3>
+            <p class="text-gray-400 text-sm">48 horas de código y diversión</p>
+          </div>
+          <div class="bg-dark-bg border border-neon-blue/50 p-4 rounded">
+            <div class="text-neon-blue font-game text-xs mb-2">EVERY WEEKEND</div>
+            <h3 class="font-bold text-lg mb-2">Escape Room</h3>
+            <p class="text-gray-400 text-sm">Nuevas temáticas cada mes</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ESCAPE ROOM section -->
+    <section id="section-escape" class="section">
+      <div class="relative h-64 md:h-96 rounded-lg overflow-hidden mb-8 border-2 border-neon-pink">
+        <img src="https://images.unsplash.com/photo-1519074069444-1ba4fff66d16?w=800" class="w-full h-full object-cover" alt="ESCAPE ROOM">
+        <div class="absolute inset-0 bg-gradient-to-t from-dark-bg via-dark-bg/50 to-transparent"></div>
+        <div class="absolute bottom-0 left-0 p-6">
+          <h1 class="font-game text-3xl md:text-5xl text-neon-pink mb-2 neon-text">ESCAPE ROOM</h1>
+          <p class="text-xl text-gray-300">Vive la aventura definitiva</p>
+        </div>
+      </div>
+
+      <!-- Items Grid (estático) -->
+      <div class="mb-8">
+        <h2 class="font-game text-neon-pink text-lg mb-4 flex items-center"><i class="fas fa-box-open mr-2"></i> INVENTORY</h2>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div class="inventory-slot rounded p-3 aspect-square flex flex-col items-center justify-center text-center group" data-item="esc1" data-section="escape">
+            <img src="https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=400" class="w-20 h-20 object-cover rounded mb-2 group-hover:scale-110 transition-transform">
+            <div class="text-neon-pink font-game text-[10px] md:text-xs mb-1">Misión Espacial</div>
+            <div class="text-neon-green text-xs font-bold">$25</div>
+            <span class="text-[10px] text-gray-500 mt-1">SERVICE</span>
+          </div>
+          <div class="inventory-slot rounded p-3 aspect-square flex flex-col items-center justify-center text-center group" data-item="esc2" data-section="escape">
+            <img src="https://images.unsplash.com/photo-1535905557558-afc4877a26fc?w=400" class="w-20 h-20 object-cover rounded mb-2 group-hover:scale-110 transition-transform">
+            <div class="text-neon-pink font-game text-[10px] md:text-xs mb-1">Misterio Medieval</div>
+            <div class="text-neon-green text-xs font-bold">$25</div>
+            <span class="text-[10px] text-gray-500 mt-1">SERVICE</span>
+          </div>
+          <div class="inventory-slot rounded p-3 aspect-square flex flex-col items-center justify-center text-center group" data-item="esc3" data-section="escape">
+            <img src="https://images.unsplash.com/photo-1509248961158-e54f6934749c?w=400" class="w-20 h-20 object-cover rounded mb-2 group-hover:scale-110 transition-transform">
+            <div class="text-neon-pink font-game text-[10px] md:text-xs mb-1">Laboratorio Zombie</div>
+            <div class="text-neon-green text-xs font-bold">$30</div>
+            <span class="text-[10px] text-gray-500 mt-1">SERVICE</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Escape Details -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div class="bg-panel border border-neon-pink/50 rounded-lg p-6">
+          <h3 class="font-game text-neon-pink mb-4">> NEXT SESSION</h3>
+          <div class="space-y-3 text-sm">
+            <div class="flex justify-between border-b border-gray-700 pb-2"><span class="text-gray-400">Date:</span><span class="text-white">April 26, 2026</span></div>
+            <div class="flex justify-between border-b border-gray-700 pb-2"><span class="text-gray-400">Time:</span><span class="text-white">15:00 - 17:00</span></div>
+            <div class="flex justify-between border-b border-gray-700 pb-2"><span class="text-gray-400">Theme:</span><span class="text-neon-pink">Misión Espacial</span></div>
+            <div class="flex justify-between"><span class="text-gray-400">Price:</span><span class="text-neon-green font-bold">$25/person</span></div>
+          </div>
+          <button class="w-full mt-4 game-btn text-dark-bg font-bold py-3 rounded" onclick="App.UI.showToast('🎟️ Redirigiendo a reserva...')">BOOK NOW</button>
+        </div>
+        <div class="bg-panel border border-neon-pink/50 rounded-lg p-6">
+          <h3 class="font-game text-neon-pink mb-4">> GALLERY</h3>
+          <div class="grid grid-cols-2 gap-2" id="escape-gallery">
+            <img src="https://images.unsplash.com/photo-1519074069444-1ba4fff66d16?w=400" class="rounded border border-gray-700 hover:border-neon-pink transition-colors cursor-pointer">
+            <img src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400" class="rounded border border-gray-700 hover:border-neon-pink transition-colors cursor-pointer">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESEARCH section -->
+    <section id="section-research" class="section">
+      <div class="relative h-64 md:h-96 rounded-lg overflow-hidden mb-8 border-2 border-neon-blue">
+        <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800" class="w-full h-full object-cover" alt="INVESTIGACIÓN">
+        <div class="absolute inset-0 bg-gradient-to-t from-dark-bg via-dark-bg/50 to-transparent"></div>
+        <div class="absolute bottom-0 left-0 p-6">
+          <h1 class="font-game text-3xl md:text-5xl text-neon-blue mb-2 neon-text">INVESTIGACIÓN</h1>
+          <p class="text-xl text-gray-300">IA y Automatización</p>
+        </div>
+      </div>
+      <div class="mb-8">
+        <h2 class="font-game text-neon-blue text-lg mb-4 flex items-center"><i class="fas fa-box-open mr-2"></i> SERVICES</h2>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div class="inventory-slot rounded p-3 aspect-square flex flex-col items-center justify-center text-center group" data-item="res1" data-section="research">
+            <img src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=400" class="w-20 h-20 object-cover rounded mb-2 group-hover:scale-110 transition-transform">
+            <div class="text-neon-blue font-game text-[10px] md:text-xs mb-1">Auditoría Seguridad IA</div>
+            <div class="text-neon-green text-xs font-bold">Consultar</div>
+            <span class="text-[10px] text-gray-500 mt-1">SERVICE</span>
+          </div>
+          <div class="inventory-slot rounded p-3 aspect-square flex flex-col items-center justify-center text-center group" data-item="res2" data-section="research">
+            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400" class="w-20 h-20 object-cover rounded mb-2 group-hover:scale-110 transition-transform">
+            <div class="text-neon-blue font-game text-[10px] md:text-xs mb-1">Automatización RPA</div>
+            <div class="text-neon-green text-xs font-bold">Consultar</div>
+            <span class="text-[10px] text-gray-500 mt-1">SERVICE</span>
+          </div>
+          <div class="inventory-slot rounded p-3 aspect-square flex flex-col items-center justify-center text-center group" data-item="res3" data-section="research">
+            <img src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=400" class="w-20 h-20 object-cover rounded mb-2 group-hover:scale-110 transition-transform">
+            <div class="text-neon-blue font-game text-[10px] md:text-xs mb-1">Software a Medida</div>
+            <div class="text-neon-green text-xs font-bold">Consultar</div>
+            <span class="text-[10px] text-gray-500 mt-1">SERVICE</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EDUCATION section -->
+    <section id="section-education" class="section">
+      <div class="relative h-64 md:h-96 rounded-lg overflow-hidden mb-8 border-2 border-neon-green">
+        <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800" class="w-full h-full object-cover" alt="EDUCACIÓN">
+        <div class="absolute inset-0 bg-gradient-to-t from-dark-bg via-dark-bg/50 to-transparent"></div>
+        <div class="absolute bottom-0 left-0 p-6">
+          <h1 class="font-game text-3xl md:text-5xl text-neon-green mb-2 neon-text">EDUCACIÓN</h1>
+          <p class="text-xl text-gray-300">Cursos y Eventos</p>
+        </div>
+      </div>
+      <div class="mb-8">
+        <h2 class="font-game text-neon-green text-lg mb-4 flex items-center"><i class="fas fa-box-open mr-2"></i> COURSES & EVENTS</h2>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div class="inventory-slot rounded p-3 aspect-square flex flex-col items-center justify-center text-center group" data-item="edu1" data-section="education">
+            <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400" class="w-20 h-20 object-cover rounded mb-2 group-hover:scale-110 transition-transform">
+            <div class="text-neon-green font-game text-[10px] md:text-xs mb-1">Curso Python IA</div>
+            <div class="text-neon-green text-xs font-bold">$150</div>
+            <span class="text-[10px] text-neon-pink mt-1">COURSE</span>
+          </div>
+          <div class="inventory-slot rounded p-3 aspect-square flex flex-col items-center justify-center text-center group" data-item="edu2" data-section="education">
+            <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=400" class="w-20 h-20 object-cover rounded mb-2 group-hover:scale-110 transition-transform">
+            <div class="text-neon-green font-game text-[10px] md:text-xs mb-1">Workshop Ciberseguridad</div>
+            <div class="text-neon-green text-xs font-bold">$80</div>
+            <span class="text-[10px] text-neon-pink mt-1">EVENT</span>
+          </div>
+          <div class="inventory-slot rounded p-3 aspect-square flex flex-col items-center justify-center text-center group" data-item="edu3" data-section="education">
+            <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400" class="w-20 h-20 object-cover rounded mb-2 group-hover:scale-110 transition-transform">
+            <div class="text-neon-green font-game text-[10px] md:text-xs mb-1">Bootcamp Full Stack</div>
+            <div class="text-neon-green text-xs font-bold">$500</div>
+            <span class="text-[10px] text-neon-pink mt-1">COURSE</span>
+          </div>
+        </div>
+      </div>
+      <!-- History Section -->
+      <div class="mb-8">
+        <h2 class="font-game text-neon-green text-lg mb-4">> HISTORY</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="education-history">
+          <div class="bg-dark-bg border border-gray-700 rounded overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1552820728-8b83bb6b2b0a?w=400" class="w-full h-32 object-cover">
+            <div class="p-3">
+              <div class="text-neon-green text-[10px] mb-1">2025-12-01</div>
+              <div class="text-xs font-bold">Curso Unity 2025</div>
+            </div>
+          </div>
+          <div class="bg-dark-bg border border-gray-700 rounded overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=400" class="w-full h-32 object-cover">
+            <div class="p-3">
+              <div class="text-neon-green text-[10px] mb-1">2025-11-15</div>
+              <div class="text-xs font-bold">Hackathon URBY</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRINTING section -->
+    <section id="section-printing" class="section">
+      <div class="relative h-64 md:h-96 rounded-lg overflow-hidden mb-8 border-2 border-neon-blue">
+        <img src="https://images.unsplash.com/photo-1631541909061-71e349d1f203?w=800" class="w-full h-full object-cover" alt="IMPRESIÓN 3D">
+        <div class="absolute inset-0 bg-gradient-to-t from-dark-bg via-dark-bg/50 to-transparent"></div>
+        <div class="absolute bottom-0 left-0 p-6">
+          <h1 class="font-game text-3xl md:text-5xl text-neon-blue mb-2 neon-text">IMPRESIÓN 3D</h1>
+          <p class="text-xl text-gray-300">Productos y Servicios</p>
+        </div>
+      </div>
+      <div class="mb-8">
+        <h2 class="font-game text-neon-blue text-lg mb-4 flex items-center"><i class="fas fa-box-open mr-2"></i> CATALOG</h2>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div class="inventory-slot rounded p-3 aspect-square flex flex-col items-center justify-center text-center group" data-item="pr1" data-section="printing">
+            <img src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=400" class="w-20 h-20 object-cover rounded mb-2 group-hover:scale-110 transition-transform">
+            <div class="text-neon-blue font-game text-[10px] md:text-xs mb-1">Figura Personalizada</div>
+            <div class="text-neon-green text-xs font-bold">$45</div>
+            <span class="text-[10px] text-neon-blue mt-1">PRODUCT</span>
+          </div>
+          <div class="inventory-slot rounded p-3 aspect-square flex flex-col items-center justify-center text-center group" data-item="pr2" data-section="printing">
+            <img src="https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?w=400" class="w-20 h-20 object-cover rounded mb-2 group-hover:scale-110 transition-transform">
+            <div class="text-neon-blue font-game text-[10px] md:text-xs mb-1">Prototipo Industrial</div>
+            <div class="text-neon-green text-xs font-bold">Consultar</div>
+            <span class="text-[10px] text-gray-500 mt-1">SERVICE</span>
+          </div>
+          <div class="inventory-slot rounded p-3 aspect-square flex flex-col items-center justify-center text-center group" data-item="pr3" data-section="printing">
+            <img src="https://images.unsplash.com/photo-1616423664045-6c600ad59935?w=400" class="w-20 h-20 object-cover rounded mb-2 group-hover:scale-110 transition-transform">
+            <div class="text-neon-blue font-game text-[10px] md:text-xs mb-1">Llavero Gaming</div>
+            <div class="text-neon-green text-xs font-bold">$15</div>
+            <span class="text-[10px] text-neon-blue mt-1">PRODUCT</span>
+          </div>
+        </div>
+      </div>
+      <!-- Delivered Gallery -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div>
+          <h3 class="font-game text-neon-blue mb-4">> DELIVERED</h3>
+          <div class="grid grid-cols-3 gap-2" id="printing-delivered">
+            <img src="https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?w=400" class="rounded border border-gray-700 hover:border-neon-blue transition-colors cursor-pointer">
+            <img src="https://images.unsplash.com/photo-1611162618071-b392a29154d6?w=400" class="rounded border border-gray-700 hover:border-neon-blue transition-colors cursor-pointer">
+          </div>
+        </div>
+        <div>
+          <h3 class="font-game text-neon-blue mb-4">> ORDER FORM</h3>
+          <div class="space-y-2">
+            <div class="bg-dark-bg border border-gray-700 p-3 rounded flex justify-between items-center">
+              <div><div class="font-bold text-sm">Figuras Personalizadas</div><div class="text-xs text-gray-400">Desde $45</div></div>
+              <button class="text-neon-blue text-xs border border-neon-blue px-3 py-1 rounded hover:bg-neon-blue hover:text-dark-bg transition-colors" onclick="App.UI.showToast('📦 Solicitud enviada')">ORDER</button>
+            </div>
+            <div class="bg-dark-bg border border-gray-700 p-3 rounded flex justify-between items-center">
+              <div><div class="font-bold text-sm">Prototipos</div><div class="text-xs text-gray-400">Cotizar</div></div>
+              <button class="text-neon-blue text-xs border border-neon-blue px-3 py-1 rounded hover:bg-neon-blue hover:text-dark-bg transition-colors" onclick="App.UI.showToast('📐 Cotización solicitada')">QUOTE</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========== MODAL (DINÁMICO) ========== -->
+  <div id="modal" class="fixed inset-0 z-50 hidden">
+    <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="App.UI.closeModal()"></div>
+    <div class="relative max-w-2xl mx-auto mt-20 bg-panel border-2 border-neon-blue rounded-lg overflow-hidden">
+      <div id="modal-content"></div>
+    </div>
+  </div>
+
+  <!-- ========== CART MODAL (DINÁMICO) ========== -->
+  <div id="cart-modal" class="fixed inset-0 z-50 hidden">
+    <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="App.UI.closeCart()"></div>
+    <div class="relative max-w-md mx-auto mt-20 bg-panel border-2 border-neon-green rounded-lg overflow-hidden">
+      <div class="p-4 border-b border-gray-700 flex justify-between items-center">
+        <h3 class="font-game text-neon-green">🛒 TU CARRITO</h3>
+        <button onclick="App.UI.closeCart()" class="text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
+      </div>
+      <div id="cart-items" class="p-4 max-h-64 overflow-y-auto space-y-3 text-sm">
+        <p class="text-gray-400 text-center">Tu carrito está vacío</p>
+      </div>
+      <div class="p-4 border-t border-gray-700">
+        <div class="flex justify-between mb-3 font-bold">
+          <span>Total:</span>
+          <span id="cart-total" class="text-neon-green">$0</span>
+        </div>
+        <button onclick="App.Cart.checkout()" class="w-full game-btn text-dark-bg font-bold py-3 rounded">CHECKOUT</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== CHAT WIDGET (DINÁMICO) ========== -->
+  <div id="chat-container" class="fixed bottom-4 right-4 z-40 hidden">
+    <div class="bg-panel border border-neon-blue rounded-lg w-80 shadow-lg">
+      <div class="p-3 border-b border-gray-700 flex justify-between items-center">
+        <span class="font-game text-neon-blue text-sm">SOPORTE URBY</span>
+        <button onclick="App.Chat.toggle()" class="text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
+      </div>
+      <div id="chat-messages" class="h-48 overflow-y-auto p-3 space-y-2 text-sm">
+        <div class="text-left"><span class="bg-gray-700 px-3 py-2 rounded inline-block">👋 Hola! ¿En qué puedo ayudarte?</span></div>
+      </div>
+      <div class="p-3 border-t border-gray-700 flex space-x-2">
+        <input id="chat-input" type="text" placeholder="Escribe tu mensaje..." class="flex-1 bg-dark-bg border border-gray-600 rounded px-3 py-2 text-sm focus:border-neon-blue focus:outline-none" onkeypress="if(event.key==='Enter')App.Chat.send()">
+        <button onclick="App.Chat.send()" class="bg-neon-blue text-dark-bg px-4 py-2 rounded font-bold text-sm hover:shadow-lg hover:shadow-neon-blue/50 transition-shadow"><i class="fas fa-paper-plane"></i></button>
+      </div>
+    </div>
+  </div>
+  <button id="chat-button" onclick="App.Chat.toggle()" class="fixed bottom-4 right-4 z-30 bg-neon-blue text-dark-bg w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:shadow-neon-blue/50 transition-shadow">
+    <i class="fas fa-comment-alt text-lg"></i>
+  </button>
+
+  <!-- ========== TOAST NOTIFICATION ========== -->
+  <div id="toast" class="fixed top-20 right-4 z-50 hidden bg-panel border border-neon-green rounded px-4 py-3 shadow-lg fade-in">
+    <span id="toast-message" class="text-sm"></span>
+  </div>
+
+  <script>
+    // ============================================
+    // 🧠 REACTIVE STORE - Solo para funcionalidades dinámicas
+    // ============================================
+    const ReactiveStore = {
+      state: {
+        cart: { items: [] },
+        chat: { messages: [], chatId: null },
+        ui: { theme: 'dark', notifications: [] }
+      },
+      subscribers: new Map(),
+
+      // Crear proxy para reactividad
+      createProxy(target, path = '') {
+        return new Proxy(target, {
+          get: (obj, prop) => {
+            const value = obj[prop];
+            const currentPath = path ? `${path}.${prop}` : prop;
+            if (value && typeof value === 'object' && !Array.isArray(value) && prop !== 'state') {
+              return this.createProxy(value, currentPath);
+            }
+            return value;
+          },
+          set: (obj, prop, value) => {
+            obj[prop] = value;
+            const currentPath = path ? `${path}.${prop}` : prop;
+            this.notify(currentPath);
+            this._autoSave(); // Placeholder para persistencia
+            return true;
+          }
+        });
+      },
+
+      init() {
+        this.state = this.createProxy(this.state);
+        this._loadPersisted(); // Intentar cargar datos guardados
+        this._bindCartBadge();
+        console.log('🧠 ReactiveStore initialized');
+      },
+
+      subscribe(paths, callback) {
+        const id = Symbol('sub');
+        this.subscribers.set(id, { paths: Array.isArray(paths) ? paths : [paths], callback });
+        return () => this.subscribers.delete(id);
+      },
+
+      notify(changedPath) {
+        for (const { paths, callback } of this.subscribers.values()) {
+          if (paths.some(p => changedPath === p || changedPath.startsWith(p + '.'))) {
+            callback(this.state, changedPath);
+          }
+        }
+      },
+
+      update(updater) {
+        const result = updater(this.state);
+        if (result) Object.assign(this.state, result);
+      },
+
+      // ============================================
+      // 🔐 PERSISTENCIA - PLACEHOLDERS (IMPLEMENTAR LUEGO)
+      // ============================================
+
+      _autoSave() {
+        // 🔄 LLAMA AQUÍ TU FUNCIÓN DE GUARDADO
+        // Ej: await Persistence.save(this.state);
+        // console.log('💾 Auto-save:', this.state);
+      },
+
+      async _loadPersisted() {
+        // 🔄 CARGA DESDE TU FUENTE DE PERSISTENCIA
+        // Ejemplo localStorage (puedes reemplazar):
+        try {
+          const saved = localStorage.getItem('urby_dynamic_state');
+          if (saved) {
+            const parsed = JSON.parse(saved);
+            if (parsed.cart) this.state.cart = parsed.cart;
+            if (parsed.chat) this.state.chat = parsed.chat;
+            console.log('✅ Datos dinámicos cargados');
+          }
+        } catch (e) { console.warn('⚠️ Error cargando:', e); }
+      },
+
+      async saveToLocalStorage() {
+        // 🔄 IMPLEMENTACIÓN BASE - MODIFICAR SEGÚN NECESIDAD
+        try {
+          localStorage.setItem('urby_dynamic_state', JSON.stringify({
+            cart: this.state.cart,
+            chat: this.state.chat
+          }));
+          return true;
+        } catch (e) { console.error('❌ Save error:', e); return false; }
+      },
+
+      // Placeholder para Firebase
+      async loadFromFirebase() {
+        /* 
+        if (!window.db) return null;
+        const doc = await db.collection('urby').doc('state').get();
+        return doc.exists ? doc.data() : null;
+        */
+        return null;
+      },
+
+      async saveToFirebase() {
+        /*
+        if (!window.db) return false;
+        await db.collection('urby').doc('state').set({
+          ...this.state,
+          updatedAt: new Date().toISOString()
+        });
+        return true;
+        */
+        return false;
+      },
+
+      // Placeholder para API REST
+      async syncWithAPI(endpoint, method = 'POST') {
+        /*
+        const res = await fetch(endpoint, {
+          method,
+          headers: {'Content-Type': 'application/json'},
+          body: method !== 'GET' ? JSON.stringify(this.state) : undefined
+        });
+        return await res.json();
+        */
+        return null;
+      },
+
+      _bindCartBadge() {
+        // Actualizar badge del carrito cuando cambie
+        this.subscribe(['cart.items'], (state) => {
+          const badge = document.getElementById('cart-badge');
+          const count = state.cart.items.length;
+          if (badge) {
+            badge.textContent = count;
+            badge.classList.toggle('hidden', count === 0);
+          }
+        });
+      }
+    };
+
+    // ============================================
+    // 🛒 CART MODULE
+    // ============================================
+    const Cart = {
+      add(item) {
+        ReactiveStore.update(state => {
+          state.cart.items.push({ ...item, addedAt: Date.now() });
+          return state;
+        });
+        App.UI.showToast(`✅ ${item.name} añadido al carrito`);
+        ReactiveStore.saveToLocalStorage(); // Guardar tras añadir
+      },
+
+      remove(itemId) {
+        ReactiveStore.update(state => {
+          state.cart.items = state.cart.items.filter(i => i.id !== itemId);
+          return state;
+        });
+        App.UI.renderCartItems();
+        ReactiveStore.saveToLocalStorage();
+      },
+
+      clear() {
+        ReactiveStore.update(state => { state.cart.items = []; return state; });
+        App.UI.renderCartItems();
+        ReactiveStore.saveToLocalStorage();
+      },
+
+      getTotal() {
+        return ReactiveStore.state.cart.items.reduce((sum, item) => {
+          const price = parseFloat(item.price.replace('$', '')) || 0;
+          return sum + price;
+        }, 0);
+      },
+
+      checkout() {
+        const items = ReactiveStore.state.cart.items;
+        if (items.length === 0) {
+          App.UI.showToast('⚠️ Tu carrito está vacío');
+          return;
+        }
+        const total = Cart.getTotal().toFixed(2);
+        App.UI.showToast(`🎉 Pedido procesado: $${total}`);
+        // 🔄 Aquí iría la llamada a tu API de pagos
+        setTimeout(() => {
+          Cart.clear();
+          App.UI.closeCart();
+        }, 1500);
+      }
+    };
+
+    // ============================================
+    // 💬 CHAT MODULE
+    // ============================================
+    const Chat = {
+      toggle() {
+        document.getElementById('chat-container').classList.toggle('hidden');
+        document.getElementById('chat-button').classList.toggle('hidden');
+      },
+
+      send() {
+        const input = document.getElementById('chat-input');
+        const text = input.value.trim();
+        if (!text) return;
+
+        // Añadir mensaje del usuario
+        ReactiveStore.update(state => {
+          state.chat.messages.push({ text, sender: 'user', timestamp: Date.now() });
+          return state;
+        });
+        input.value = '';
+        App.UI.renderChat();
+
+        // 🔄 Simular respuesta (reemplazar con tu backend)
+        setTimeout(() => {
+          ReactiveStore.update(state => {
+            state.chat.messages.push({ 
+              text: '🤖 Gracias por contactarnos. Un agente te atenderá pronto.', 
+              sender: 'bot', 
+              timestamp: Date.now() 
+            });
+            return state;
+          });
+          App.UI.renderChat();
+          ReactiveStore.saveToLocalStorage();
+        }, 1000);
+      },
+
+      loadHistory() {
+        // 🔄 Cargar historial desde persistencia
+        const messages = ReactiveStore.state.chat.messages;
+        if (messages.length > 1) App.UI.renderChat();
+      }
+    };
+
+    // ============================================
+    // 🎨 UI MODULE - Maneja interacciones con HTML estático
+    // ============================================
+    const UI = {
+      home:document.querySelector('#home'),
+      navLink:Array.from(document.querySelectorAll('[data-nav]')),
+      sections:Array.from(document.querySelectorAll('[id^="section-"]')),
+      init() {
+        this._bindNavigation();
+        this._bindInventoryClicks();
+        this._bindCartButton();
+        console.log('🎨 UI Module initialized');
+      },
+
+      _bindNavigation() {
+        // Navegación entre vistas estáticas
+        const navigate = (section) => {
+          console.log(section)
+          // si hay alguna activa desactivamos
+          let nameAreaActive = this.navLink.find(link => link.classList.contains('active'));
+          if(nameAreaActive) {
+            nameAreaActive?.classList.remove('active');
+          }
+          
+          let sectionActive = this.sections.find(section => section.classList.contains('active'));
+          if(sectionActive){
+            sectionActive.classList.remove('active');
+          }
+
+          // effect home
+          if(section == 'home') {
+            this.home.classList.remove('active-section');
+          } else{
+            this.home.classList.add('active-section');
+            let select = this.sections.find(item => item.id == section)
+            select.classList.add('active');
+            // move smooth scroll to item
+            select.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+          
+          // Actualizar URL sin recargar
+          const url = new URL(window.location);
+          if (section && section !== 'home') {
+            url.searchParams.set('section', section);
+          } else {
+            url.searchParams.delete('section');
+          }
+          window.history.pushState({}, '', url);
+        };
+
+        // Bind botones desktop
+        document.querySelectorAll('.custom-nav button').forEach(btn => {
+          btn.addEventListener('click', (e) => navigate(e.target.dataset.nav));
+        });
+        // Bind botones mobile
+        document.querySelectorAll('.custom-nav button.mobile').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            navigate(e.target.dataset.nav);
+            document.getElementById('mobile-menu').classList.add('hidden');
+          });
+        });
+        // Bind cards del home
+        document.querySelectorAll('[data-section]').forEach(card => {
+          if (card.closest('#home')) {
+            card.addEventListener('click', (e) => {
+              const section = e.currentTarget.dataset.section;
+              if (section) navigate(section);
+            });
+          }
+        });
+
+        // Manejar URL inicial
+        const params = new URLSearchParams(window.location.search);
+        const section = params.get('section');
+        if (section && document.getElementById(`section-${section}`)) {
+          navigate(section);
+        }
+      },
+
+      _bindInventoryClicks() {
+        // Click en items del inventory -> abrir modal
+        document.querySelectorAll('.inventory-slot').forEach(slot => {
+          slot.addEventListener('click', (e) => {
+            const item = e.currentTarget.dataset.item;
+            const section = e.currentTarget.dataset.section;
+            if (item && section) this.openModal(item, section);
+          });
+        });
+      },
+
+      _bindCartButton() {
+        document.getElementById('cart-btn')?.addEventListener('click', () => {
+          this.renderCartItems();
+          document.getElementById('cart-modal').classList.remove('hidden');
+        });
+      },
+
+      toggleMobileMenu() {
+        document.getElementById('mobile-menu').classList.toggle('hidden');
+      },
+
+      // === MODAL DE ITEM ===
+      openModal(itemId, sectionId) {
+        // Datos estáticos de referencia (puedes mover a un JSON externo)
+        const itemsDB = {
+          esc1: { name: 'Misión Espacial', price: '$25', desc: 'Escapa de la estación espacial en 60 min', img: 'https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=400' },
+          esc2: { name: 'Misterio Medieval', price: '$25', desc: 'Resuelve el enigma del castillo', img: 'https://images.unsplash.com/photo-1535905557558-afc4877a26fc?w=400' },
+          esc3: { name: 'Laboratorio Zombie', price: '$30', desc: 'Sobrevive al apocalipsis', img: 'https://images.unsplash.com/photo-1509248961158-e54f6934749c?w=400' },
+          res1: { name: 'Auditoría Seguridad IA', price: 'Consultar', desc: 'Análisis de vulnerabilidades con IA', img: 'https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=400' },
+          res2: { name: 'Automatización RPA', price: 'Consultar', desc: 'Optimización con RPA', img: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400' },
+          res3: { name: 'Software a Medida', price: 'Consultar', desc: 'Desarrollo personalizado', img: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=400' },
+          edu1: { name: 'Curso Python IA', price: '$150', desc: 'Aprende Python aplicado a IA', img: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400', date: '2026-05-15' },
+          edu2: { name: 'Workshop Ciberseguridad', price: '$80', desc: 'Taller intensivo 2 días', img: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=400', date: '2026-06-01' },
+          edu3: { name: 'Bootcamp Full Stack', price: '$500', desc: '12 semanas intensivas', img: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400', date: '2026-07-01' },
+          pr1: { name: 'Figura Personalizada', price: '$45', desc: 'Impresión 3D de alta calidad', img: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=400' },
+          pr2: { name: 'Prototipo Industrial', price: 'Consultar', desc: 'Prototipado rápido', img: 'https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?w=400' },
+          pr3: { name: 'Llavero Gaming', price: '$15', desc: 'Diseños personalizados', img: 'https://images.unsplash.com/photo-1616423664045-6c600ad59935?w=400' }
+        };
+
+        const item = itemsDB[itemId];
+        if (!item) return;
+
+        const hasDate = item.date;
+        document.getElementById('modal-content').innerHTML = `
+          <div class="relative">
+            <button onclick="App.UI.closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white z-10"><i class="fas fa-times text-2xl"></i></button>
+            <img src="${item.img}" class="w-full h-64 object-cover rounded-t-lg" alt="${item.name}">
+            <div class="p-6">
+              <div class="flex justify-between items-start mb-4">
+                <h2 class="font-game text-2xl text-neon-blue">${item.name}</h2>
+                <span class="bg-neon-green text-dark-bg px-3 py-1 rounded font-bold">${item.price}</span>
+              </div>
+              <p class="text-gray-300 mb-6">${item.desc}</p>
+              ${hasDate ? `<div class="bg-panel border border-neon-pink/50 rounded p-4 mb-6"><div class="text-neon-pink font-game text-xs mb-2">SCHEDULE</div><div class="text-white"><i class="far fa-calendar mr-2"></i>${item.date}</div></div>` : ''}
+              <div class="flex space-x-4">
+                <button onclick="App.Cart.add(${JSON.stringify(item).replace(/"/g, '&quot;')})" class="flex-1 game-btn text-dark-bg font-bold py-3 rounded"><i class="fas fa-cart-plus mr-2"></i> ADD TO CART</button>
+                <button onclick="App.UI.shareItem('${itemId}')" class="px-6 border-2 border-neon-blue text-neon-blue rounded hover:bg-neon-blue hover:text-dark-bg transition-colors"><i class="fas fa-share-alt"></i></button>
+              </div>
+            </div>
+          </div>
+        `;
+        document.getElementById('modal').classList.remove('hidden');
+      },
+
+      closeModal() { document.getElementById('modal').classList.add('hidden'); },
+      closeCart() { document.getElementById('cart-modal').classList.add('hidden'); },
+
+      renderCartItems() {
+        const container = document.getElementById('cart-items');
+        const items = ReactiveStore.state.cart.items;
+        const total = Cart.getTotal().toFixed(2);
+        document.getElementById('cart-total').textContent = `$${total}`;
+
+        if (items.length === 0) {
+          container.innerHTML = '<p class="text-gray-400 text-center">Tu carrito está vacío</p>';
+          return;
+        }
+
+        container.innerHTML = items.map(item => `
+          <div class="flex justify-between items-center bg-dark-bg p-3 rounded">
+            <div>
+              <div class="font-bold text-sm">${item.name}</div>
+              <div class="text-neon-green text-xs">${item.price}</div>
+            </div>
+            <button onclick="App.Cart.remove('${item.id}')" class="text-neon-pink text-xs hover:underline">✕ Remove</button>
+          </div>
+        `).join('');
+      },
+
+      renderChat() {
+        const container = document.getElementById('chat-messages');
+        const messages = ReactiveStore.state.chat.messages;
+        container.innerHTML = messages.map(msg => `
+          <div class="${msg.sender === 'user' ? 'text-right' : 'text-left'}">
+            <span class="${msg.sender === 'user' ? 'bg-neon-blue text-dark-bg' : 'bg-gray-700 text-white'} px-3 py-2 rounded inline-block text-xs max-w-[80%]">
+              ${msg.text}
+            </span>
+          </div>
+        `).join('');
+        container.scrollTop = container.scrollHeight;
+      },
+
+      showToast(message) {
+        const toast = document.getElementById('toast');
+        document.getElementById('toast-message').textContent = message;
+        toast.classList.remove('hidden');
+        setTimeout(() => toast.classList.add('hidden'), 3000);
+      },
+
+      shareItem(itemId) {
+        const url = new URL(window.location);
+        url.searchParams.set('item', itemId);
+        navigator.clipboard.writeText(url.toString());
+        this.showToast('🔗 Link copiado al portapapeles');
+      }
+    };
+
+    // ============================================
+    // 🚀 APP INIT
+    // ============================================
+    const App = {
+      init() {
+        ReactiveStore.init();
+        UI.init();
+        Chat.loadHistory();
+        
+        // Exponer globalmente para handlers inline
+        window.App = { ReactiveStore, Cart, Chat, UI };
+        
+        console.log('🎮 URBY LABS - Hybrid Mode Ready');
+      }
+    };
+
+    // Iniciar cuando el DOM esté listo
+    document.addEventListener('DOMContentLoaded', () => App.init());
+  </script>
+</body>
 </html>
