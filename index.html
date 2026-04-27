@@ -725,8 +725,8 @@
   </button>
 
   <!-- ========== TOAST NOTIFICATION ========== -->
-  <div id="toast" class="fixed top-20 right-4 z-50 hidden bg-panel border border-neon-green rounded px-4 py-3 shadow-lg fade-in">
-    <span id="toast-message" class="text-sm"></span>
+  <div id="toast" class="text-white fixed top-20 right-4 z-50 hidden bg-panel border border-neon-green rounded px-4 py-3 shadow-lg fade-in">
+    <span id="toast-message" class="text-sm text-white"></span>
   </div>
 
   <script>
@@ -1158,7 +1158,7 @@
       showToast(message) {
         const toast = document.getElementById('toast');
         document.getElementById('toast-message').textContent = message;
-        toast.classList.remove('hidden');
+        toast.classList.remove('hidden').add('text-white');
         setTimeout(() => toast.classList.add('hidden'), 3000);
       },
 
