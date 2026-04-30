@@ -4,7 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>URBY LABS - Game Zone</title>
+    <!--
     <script src="https://cdn.tailwindcss.com"></script>
+  -->
+    <script src="/tailwindcss.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <link
@@ -162,19 +165,19 @@
         }
       }
 
-      .inventory-slot {
+      .gallery-item-slot {
         background: rgba(26, 26, 46, 0.9);
         border: 2px solid #333;
         transition: all 0.2s;
-        cursor: pointer;
+        box-sizing: border-box;
       }
 
-      .inventory-slot:hover {
+      .gallery-item-slot:hover {
         border-color: #00f3ff;
         box-shadow: 0 0 15px rgba(0, 243, 255, 0.5);
       }
 
-      .inventory-slot.selected {
+      .gallery-item-slot.selected {
         border-color: #00ff88;
         box-shadow: 0 0 20px rgba(0, 255, 136, 0.6);
       }
@@ -231,30 +234,46 @@
       }
     </style>
     <style type="text/tailwindcss">
+      
+      .home-logo{
+        box-shadow:  0 0 30px rgba(0, 183, 255, 0.6);
+      }
       #home{
         right: 1rem;
         @apply top-0 z-[10] py-12;
-        
+        .section-content-menu{
+          min-height: 20ch;
+          margin:0 auto !important;
+          display: flex;
+          justify-content: center;
+          div{
+            min-width: 100%;
+          }
+        }
         .game-card {
           background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
           border: 2px solid #00f3ff;
           box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
-          transition: all 0.3s;
+          transition: transform 1s ease;
+          transform: translateY(0px) scale(1);
           i {
             transition:
               margin-left 0.3s ease-in-out,
               height 0.3s ease-in-out;
+          }
+          div{
+            transition: background-color 0.3s ease-in-out, padding 0.3s ease-in-out;
           }
         }
 
         .game-card:hover {
           transform: translateY(-15px) scale(1.02);
           box-shadow: 0 0 30px rgba(0, 243, 255, 0.6);
+          cursor: pointer;
           div {
             background-color: rgba(0, 0, 0, 0.5) !important;
-            padding: 0.5rem;
-            padding-bottom: 1.5rem;
             border-radius: 1rem;
+            padding: 0.5rem;
           }
           i {
             margin-left: 20px;
@@ -262,7 +281,21 @@
         }
       }
       .grid-home{
-        @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 lg:gap-6 xl:gap-6 min-h-[30ch];
+        @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 lg:gap-6 xl:gap-6 min-h-[10ch] md:min-h-[30ch] lg:min-h-[30ch] xl:min-h-[30ch];
+      }
+      .gallery-grid{
+        @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 cursor-pointer;
+        .gallery-item-slot{
+          @apply relative rounded-lg p-3 m-2 flex flex-col items-center justify-end text-center ;
+          
+          img{
+            @apply absolute w-[100%] h-[100%] object-cover rounded group-hover:scale-110 transition-transform z-[0];
+          }
+          div, span{
+            @apply relative z-[2] bg-black/80 block p-2 w-full text-lg rounded-lg;
+          }
+        }
+
       }
       .custom-nav{
         opacity: 0;
@@ -280,10 +313,13 @@
       }
       .section {
         z-index: 5;
-        @apply relative container mx-auto px-4 py-8 hidden;
+        @apply relative container mx-auto px-4 py-8 hidden ;
 
         &.active { 
           @apply grid w-[90vw] md:w-[calc(100vw-30ch)] lg:w-[calc(100vw-30ch)] xl:w-[calc(100vw-30ch)];
+        }
+        .section-item-box{
+          @apply relative h-64 md:h-96 rounded-lg overflow-hidden mb-8 border-2;
         }
       }
       .section-data-content{
@@ -295,8 +331,14 @@
           @apply text-4xl mb-3 group-hover:scale-110 transition-transform;
         }
       }
+      .section-content-menu{
+        @apply relative z-10 h-full flex flex-col justify-end w-[75%] md:w-full lg:w-full xl:w-full;  
+      }
       .active-section{
         @apply fixed top-10 left-0 md:left-[-25ch] lg:left-[-25ch] xl:left-[-25ch];
+        .section-content-menu{
+          min-height: 10ch !important;
+        }
         div[name=text-call]{
           display: none;
         }
@@ -311,7 +353,7 @@
             @apply ms-0;
           }
           .game-card{
-            @apply w-1/4 md:w-full lg:w-full xl:w-full text-[7px] min-h-[15ch];
+            @apply w-1/2 md:w-full lg:w-full xl:w-full text-[7px] min-h-[15ch];
             .section-data-content{
               h3{
                 @apply text-xs md:text-sm lg:text-sm xl:text-sm;
@@ -343,6 +385,14 @@
           @apply h-[10ch] p-2;
         }
       }
+      #modal-content{
+        .modal-content-desc{
+          @apply text-white py-5;
+          h4{
+            @apply text-lg font-bold py-2;
+          }
+        }
+      }
     </style>
 </head>
 <body class="min-h-screen">
@@ -359,7 +409,7 @@
       <div id="nav-links" class="custom-nav">
         <button data-nav="home" class="custom-button-nav">HOME</button>
         <button data-nav="section-escape" class="custom-button-nav">ESCAPE ROOM</button>
-        <button data-nav="section-research" class="custom-button-nav">INVESTIGACIÓN</button>
+        <button data-nav="section-research" class="custom-button-nav">INVESTIGACIÓN Y DESARROLLO</button>
         <button data-nav="section-education" class="custom-button-nav">EDUCACIÓN</button>
         <button data-nav="section-printing" class="custom-button-nav">IMPRESIÓN 3D</button>
       </div>
@@ -381,7 +431,7 @@
       <div class="custom-nav mobile">
         <button data-nav="home" class="custom-button-nav mobile">HOME</button>
         <button data-nav="section-escape" class="custom-button-nav mobile">ESCAPE ROOM</button>
-        <button data-nav="section-research" class="custom-button-nav mobile">INVESTIGACIÓN</button>
+        <button data-nav="section-research" class="custom-button-nav mobile">INVESTIGACIÓN Y DESARROLLO</button>
         <button data-nav="section-education" class="custom-button-nav mobile">EDUCACIÓN</button>
         <button data-nav="section-printing" class="custom-button-nav mobile">IMPRESIÓN 3D</button>
       </div>
@@ -394,12 +444,13 @@
     <!-- HOME section -->
     <section id="home" class="section active">
       <div class="text-center mb-16" name="text-call">
-        <h1 class="font-game text-3xl md:text-5xl text-neon-blue mb-4 neon-text animate-pulse-glow">SELECT YOUR AREA</h1>
-        <p class="text-gray-400 font-tech text-lg">Choose your mission</p>
+        <div class="flex justify-center"><img class="home-logo" width="200px" height="200px" src="urbylabs.webp" style="background-color: rgba(255,255,255,0.8);border-radius: 50%;padding:10px;;filter: drop-shadow(4px 4px 6px rgba(0, 97, 207, 0.5));" alt=""> </div>
+        <p class="text-gray-400 font-tech text-lg pt-3">ELIGE PARA EMPEZAR</p>
       </div>
 
       <div class="grid-home">
         <!-- Escape Room Card -->
+        <div class="section-content-menu">
         <div data-section="section-escape" class="game-card rounded-lg p-6 group relative overflow-hidden">
           <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/80"></div>
           <img src="https://images.unsplash.com/photo-1519074069444-1ba4fff66d16?w=800" alt="ESCAPE ROOM" class="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-70 transition-opacity">
@@ -409,19 +460,23 @@
             <p class="text-gray-300 text-xs">Vive la aventura definitiva</p>
           </div>
         </div>
+        </div>
 
         <!-- Research Card -->
+        <div class="section-content-menu">
         <div data-section="section-research" class="game-card rounded-lg p-6 group relative overflow-hidden">
           <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/80"></div>
-          <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800" alt="INVESTIGACIÓN" class="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-70 transition-opacity">
+          <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800" alt="INVESTIGACIÓN Y DESARROLLO" class="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-70 transition-opacity">
           <div class="section-data-content">
             <i class="fas fa-microchip text-neon-blue "></i>
-            <h3 class="text-neon-blue ">INVESTIGACIÓN</h3>
+            <h3 class="text-neon-blue ">INVESTIGACIÓN Y DESARROLLO</h3>
             <p class="text-gray-300 text-xs">IA y Automatización</p>
           </div>
         </div>
+        </div>
 
         <!-- Education Card -->
+        <div class="section-content-menu">
         <div data-section="section-education" class="game-card rounded-lg p-6 group relative overflow-hidden">
           <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/80"></div>
           <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800" alt="EDUCACIÓN" class="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-70 transition-opacity">
@@ -431,8 +486,10 @@
             <p class="text-gray-300 text-xs">Cursos y Eventos</p>
           </div>
         </div>
+        </div>
 
         <!-- Printing Card -->
+        <div class="section-content-menu">
         <div data-section="section-printing" class="game-card rounded-lg p-6 group relative overflow-hidden">
           <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/80"></div>
           <img src="https://images.unsplash.com/photo-1631541909061-71e349d1f203?w=800" alt="IMPRESIÓN 3D" class="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-70 transition-opacity">
@@ -443,6 +500,7 @@
           </div>
         </div>
       </div>
+        </div>
 
       <!-- Featured Events (estático, se puede actualizar vía JS si se desea) -->
       <div name="events" class=" mt-16 border-2 border-neon-blue/30 rounded-lg p-8 bg-panel/50">
@@ -469,7 +527,7 @@
 
     <!-- ESCAPE ROOM section -->
     <section id="section-escape" class="section">
-      <div class="relative h-64 md:h-96 rounded-lg overflow-hidden mb-8 border-2 border-neon-pink">
+      <div class="section-item-box border-neon-pink">
         <img src="https://images.unsplash.com/photo-1519074069444-1ba4fff66d16?w=800" class="w-full h-full object-cover" alt="ESCAPE ROOM">
         <div class="absolute inset-0 bg-gradient-to-t from-dark-bg via-dark-bg/50 to-transparent"></div>
         <div class="absolute bottom-0 left-0 p-6">
@@ -480,27 +538,14 @@
 
       <!-- Items Grid (estático) -->
       <div class="mb-8">
-        <h2 class="font-game text-neon-pink text-lg mb-4 flex items-center"><i class="fas fa-box-open mr-2"></i> INVENTORY</h2>
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          <div class="inventory-slot rounded p-3 aspect-square flex flex-col items-center justify-center text-center group" data-item="esc1" data-section="escape">
-            <img src="https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=400" class="w-20 h-20 object-cover rounded mb-2 group-hover:scale-110 transition-transform">
-            <div class="text-neon-pink font-game text-[10px] md:text-xs mb-1">Misión Espacial</div>
-            <div class="text-neon-green text-xs font-bold">$25</div>
-            <span class="text-[10px] text-gray-500 mt-1">SERVICE</span>
+        <h2 class="font-game text-neon-pink text-lg mb-4 flex items-center"><i class="fas fa-box-open mr-2"></i> TEMATICAS</h2>
+        <div class="gallery-grid grid grid-cols-1 md:grid-cols-3 gap-4 py-10">
+          <div class="gallery-item-slot max-h-[420px] h-[420px]" data-item="esc1" data-section="escape">
+            <img src="/images/atelier.png" height="420px">
+            <div class="text-neon-green text-xs font-bold">$12000</div>
+            <span class="text-[10px] text-white mt-1">3 a 4 personas</span>
           </div>
-          <div class="inventory-slot rounded p-3 aspect-square flex flex-col items-center justify-center text-center group" data-item="esc2" data-section="escape">
-            <img src="https://images.unsplash.com/photo-1535905557558-afc4877a26fc?w=400" class="w-20 h-20 object-cover rounded mb-2 group-hover:scale-110 transition-transform">
-            <div class="text-neon-pink font-game text-[10px] md:text-xs mb-1">Misterio Medieval</div>
-            <div class="text-neon-green text-xs font-bold">$25</div>
-            <span class="text-[10px] text-gray-500 mt-1">SERVICE</span>
-          </div>
-          <div class="inventory-slot rounded p-3 aspect-square flex flex-col items-center justify-center text-center group" data-item="esc3" data-section="escape">
-            <img src="https://images.unsplash.com/photo-1509248961158-e54f6934749c?w=400" class="w-20 h-20 object-cover rounded mb-2 group-hover:scale-110 transition-transform">
-            <div class="text-neon-pink font-game text-[10px] md:text-xs mb-1">Laboratorio Zombie</div>
-            <div class="text-neon-green text-xs font-bold">$30</div>
-            <span class="text-[10px] text-gray-500 mt-1">SERVICE</span>
-          </div>
-        </div>
+
       </div>
 
       <!-- Escape Details -->
@@ -527,31 +572,31 @@
 
     <!-- RESEARCH section -->
     <section id="section-research" class="section">
-      <div class="relative h-64 md:h-96 rounded-lg overflow-hidden mb-8 border-2 border-neon-blue">
-        <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800" class="w-full h-full object-cover" alt="INVESTIGACIÓN">
+      <div class="section-item-box border-neon-blue">
+        <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800" class="w-full h-full object-cover" alt="INVESTIGACIÓN Y DESARROLLO">
         <div class="absolute inset-0 bg-gradient-to-t from-dark-bg via-dark-bg/50 to-transparent"></div>
         <div class="absolute bottom-0 left-0 p-6">
-          <h1 class="font-game text-3xl md:text-5xl text-neon-blue mb-2 neon-text">INVESTIGACIÓN</h1>
+          <h1 class="font-game text-3xl md:text-5xl text-neon-blue mb-2 neon-text">INVESTIGACIÓN Y DESARROLLO</h1>
           <p class="text-xl text-gray-300">IA y Automatización</p>
         </div>
       </div>
       <div class="mb-8">
         <h2 class="font-game text-neon-blue text-lg mb-4 flex items-center"><i class="fas fa-box-open mr-2"></i> SERVICES</h2>
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          <div class="inventory-slot rounded p-3 aspect-square flex flex-col items-center justify-center text-center group" data-item="res1" data-section="research">
-            <img src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=400" class="w-20 h-20 object-cover rounded mb-2 group-hover:scale-110 transition-transform">
+        <div class="gallery-grid">
+          <div class="gallery-item-slot" data-item="res1" data-section="research">
+            <img src="https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=400" >
             <div class="text-neon-blue font-game text-[10px] md:text-xs mb-1">Auditoría Seguridad IA</div>
             <div class="text-neon-green text-xs font-bold">Consultar</div>
             <span class="text-[10px] text-gray-500 mt-1">SERVICE</span>
           </div>
-          <div class="inventory-slot rounded p-3 aspect-square flex flex-col items-center justify-center text-center group" data-item="res2" data-section="research">
-            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400" class="w-20 h-20 object-cover rounded mb-2 group-hover:scale-110 transition-transform">
+          <div class="gallery-item-slot" data-item="res2" data-section="research">
+            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400" >
             <div class="text-neon-blue font-game text-[10px] md:text-xs mb-1">Automatización RPA</div>
             <div class="text-neon-green text-xs font-bold">Consultar</div>
             <span class="text-[10px] text-gray-500 mt-1">SERVICE</span>
           </div>
-          <div class="inventory-slot rounded p-3 aspect-square flex flex-col items-center justify-center text-center group" data-item="res3" data-section="research">
-            <img src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=400" class="w-20 h-20 object-cover rounded mb-2 group-hover:scale-110 transition-transform">
+          <div class="gallery-item-slot" data-item="res3" data-section="research">
+            <img src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=400" >
             <div class="text-neon-blue font-game text-[10px] md:text-xs mb-1">Software a Medida</div>
             <div class="text-neon-green text-xs font-bold">Consultar</div>
             <span class="text-[10px] text-gray-500 mt-1">SERVICE</span>
@@ -562,40 +607,45 @@
 
     <!-- EDUCATION section -->
     <section id="section-education" class="section">
-      <div class="relative h-64 md:h-96 rounded-lg overflow-hidden mb-8 border-2 border-neon-green">
+      <div class="section-item-box border-neon-green">
         <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800" class="w-full h-full object-cover" alt="EDUCACIÓN">
         <div class="absolute inset-0 bg-gradient-to-t from-dark-bg via-dark-bg/50 to-transparent"></div>
         <div class="absolute bottom-0 left-0 p-6">
           <h1 class="font-game text-3xl md:text-5xl text-neon-green mb-2 neon-text">EDUCACIÓN</h1>
-          <p class="text-xl text-gray-300">Cursos y Eventos</p>
+          <p class="my-5 text-xl text-gray-300">Cursos y Eventos</p>
         </div>
       </div>
       <div class="mb-8">
-        <h2 class="font-game text-neon-green text-lg mb-4 flex items-center"><i class="fas fa-box-open mr-2"></i> COURSES & EVENTS</h2>
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          <div class="inventory-slot rounded p-3 aspect-square flex flex-col items-center justify-center text-center group" data-item="edu1" data-section="education">
-            <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400" class="w-20 h-20 object-cover rounded mb-2 group-hover:scale-110 transition-transform">
-            <div class="text-neon-green font-game text-[10px] md:text-xs mb-1">Curso Python IA</div>
-            <div class="text-neon-green text-xs font-bold">$150</div>
-            <span class="text-[10px] text-neon-pink mt-1">COURSE</span>
+        <h2 class="font-game text-uppercase text-neon-green text-lg mb-8 flex items-center"><i class="fas fa-box-open mr-2"></i> Cursos y eventos</h2>
+        <div class="gallery-grid">
+          <div class="gallery-item-slot" data-item="edu1" data-section="education">
+            <img src="/images/didactica.avif" class="w-20 h-20 object-cover rounded mb-2 groups-hover:scale-110 transition-transform">
+            <div class="py-2 px-4 text-neon-green font-game text-md mb-1">
+              <div>Programación: Didactica especifica</div>
+              <b>$ 20.000</b>
+              <small class="block text-sm text-white mt-1 text-start">
+              Aprende programación y recursos para enseñar en el aula.
+            </small> 
+            <small class="pt-4 block w-full text-sm text-center text-white"> 2 de Mayo 2026 </small>
+            </div>
           </div>
-          <div class="inventory-slot rounded p-3 aspect-square flex flex-col items-center justify-center text-center group" data-item="edu2" data-section="education">
-            <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=400" class="w-20 h-20 object-cover rounded mb-2 group-hover:scale-110 transition-transform">
-            <div class="text-neon-green font-game text-[10px] md:text-xs mb-1">Workshop Ciberseguridad</div>
-            <div class="text-neon-green text-xs font-bold">$80</div>
-            <span class="text-[10px] text-neon-pink mt-1">EVENT</span>
-          </div>
-          <div class="inventory-slot rounded p-3 aspect-square flex flex-col items-center justify-center text-center group" data-item="edu3" data-section="education">
-            <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400" class="w-20 h-20 object-cover rounded mb-2 group-hover:scale-110 transition-transform">
-            <div class="text-neon-green font-game text-[10px] md:text-xs mb-1">Bootcamp Full Stack</div>
-            <div class="text-neon-green text-xs font-bold">$500</div>
-            <span class="text-[10px] text-neon-pink mt-1">COURSE</span>
+          <div class="gallery-item-slot" data-item="edu2" data-section="education">
+            <img src="/images/clases.jpeg" class="w-20 h-20 object-cover rounded mb-2 groups-hover:scale-110 transition-transform">
+            <div class="py-2 px-4 text-neon-green font-game text-md mb-1">
+              <div>Programación: Clases particulares</div>
+              <b>$ 5.000</b>
+              <small class="block text-sm text-white mt-1 text-start">
+                Cualquier nivel, lenguajes, frameworks y herramientas.
+            </small> 
+            <small class="pt-4 block w-full text-sm text-center text-white">Cualquier dia de la semana </small>
+            </div>
           </div>
         </div>
       </div>
       <!-- History Section -->
       <div class="mb-8">
-        <h2 class="font-game text-neon-green text-lg mb-4">> HISTORY</h2>
+        <!--
+        <h2 class="font-game text-neon-green text-lg mb-4">> Recuerdos < </h2>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="education-history">
           <div class="bg-dark-bg border border-gray-700 rounded overflow-hidden">
             <img src="https://images.unsplash.com/photo-1552820728-8b83bb6b2b0a?w=400" class="w-full h-32 object-cover">
@@ -611,13 +661,14 @@
               <div class="text-xs font-bold">Hackathon URBY</div>
             </div>
           </div>
+          -->
         </div>
       </div>
     </section>
 
     <!-- PRINTING section -->
     <section id="section-printing" class="section">
-      <div class="relative h-64 md:h-96 rounded-lg overflow-hidden mb-8 border-2 border-neon-blue">
+      <div class="section-item-box border-neon-blue">
         <img src="https://images.unsplash.com/photo-1631541909061-71e349d1f203?w=800" class="w-full h-full object-cover" alt="IMPRESIÓN 3D">
         <div class="absolute inset-0 bg-gradient-to-t from-dark-bg via-dark-bg/50 to-transparent"></div>
         <div class="absolute bottom-0 left-0 p-6">
@@ -627,21 +678,21 @@
       </div>
       <div class="mb-8">
         <h2 class="font-game text-neon-blue text-lg mb-4 flex items-center"><i class="fas fa-box-open mr-2"></i> CATALOG</h2>
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          <div class="inventory-slot rounded p-3 aspect-square flex flex-col items-center justify-center text-center group" data-item="pr1" data-section="printing">
-            <img src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=400" class="w-20 h-20 object-cover rounded mb-2 group-hover:scale-110 transition-transform">
+        <div class="gallery-grid">
+          <div class="gallery-item-slot" data-item="pr1" data-section="printing">
+            <img src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=400" >
             <div class="text-neon-blue font-game text-[10px] md:text-xs mb-1">Figura Personalizada</div>
             <div class="text-neon-green text-xs font-bold">$45</div>
             <span class="text-[10px] text-neon-blue mt-1">PRODUCT</span>
           </div>
-          <div class="inventory-slot rounded p-3 aspect-square flex flex-col items-center justify-center text-center group" data-item="pr2" data-section="printing">
-            <img src="https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?w=400" class="w-20 h-20 object-cover rounded mb-2 group-hover:scale-110 transition-transform">
+          <div class="gallery-item-slot" data-item="pr2" data-section="printing">
+            <img src="https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?w=400" >
             <div class="text-neon-blue font-game text-[10px] md:text-xs mb-1">Prototipo Industrial</div>
             <div class="text-neon-green text-xs font-bold">Consultar</div>
             <span class="text-[10px] text-gray-500 mt-1">SERVICE</span>
           </div>
-          <div class="inventory-slot rounded p-3 aspect-square flex flex-col items-center justify-center text-center group" data-item="pr3" data-section="printing">
-            <img src="https://images.unsplash.com/photo-1616423664045-6c600ad59935?w=400" class="w-20 h-20 object-cover rounded mb-2 group-hover:scale-110 transition-transform">
+          <div class="gallery-item-slot" data-item="pr3" data-section="printing">
+            <img src="https://images.unsplash.com/photo-1616423664045-6c600ad59935?w=400" >
             <div class="text-neon-blue font-game text-[10px] md:text-xs mb-1">Llavero Gaming</div>
             <div class="text-neon-green text-xs font-bold">$15</div>
             <span class="text-[10px] text-neon-blue mt-1">PRODUCT</span>
@@ -679,7 +730,7 @@
   <div id="modal" class="fixed inset-0 z-50 hidden">
     <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="App.UI.closeModal()"></div>
     <div class="relative max-w-2xl mx-auto mt-20 bg-panel border-2 border-neon-blue rounded-lg overflow-hidden">
-      <div id="modal-content"></div>
+      <div id="modal-content" class="h-[80vh] overflow-y-scroll"></div>
     </div>
   </div>
 
@@ -987,10 +1038,8 @@
         app.UI = this;
       },
 
-      _bindNavigation() {
         // Navegación entre vistas estáticas
-        const navigate = (section) => {
-          console.log(section)
+        _navigate(section, item){
           // si hay alguna activa desactivamos
           let nameAreaActive = this.navLink.find(link => link.classList.contains('active'));
           if(nameAreaActive) {
@@ -1006,31 +1055,41 @@
           if(section == 'home') {
             this.home.classList.remove('active-section');
           } else{
+            section = section.startsWith('section-') ? section : `section-${section}`;
             this.home.classList.add('active-section');
             let select = this.sections.find(item => item.id == section)
             select.classList.add('active');
             // move smooth scroll to item
             select.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            if(item){
+              this.openModal(item, section);
+            }
           }
           
           // Actualizar URL sin recargar
           const url = new URL(window.location);
           if (section && section !== 'home') {
             url.searchParams.set('section', section);
+            if( item ){            
+              url.searchParams.set('item', item);
+            } else {
+              url.searchParams.delete('item');
+            }
           } else {
             url.searchParams.delete('section');
           }
           window.history.pushState({}, '', url);
-        };
-
+        },
+      _bindNavigation() {
+        const self = this
         // Bind botones desktop
         document.querySelectorAll('.custom-nav button').forEach(btn => {
-          btn.addEventListener('click', (e) => navigate(e.target.dataset.nav));
+          btn.addEventListener('click', (e) => self._navigate(e.target.dataset.nav));
         });
         // Bind botones mobile
         document.querySelectorAll('.custom-nav button.mobile').forEach(btn => {
           btn.addEventListener('click', (e) => {
-            navigate(e.target.dataset.nav);
+            self._navigate(e.target.dataset.nav);
             document.getElementById('mobile-menu').classList.add('hidden');
           });
         });
@@ -1039,7 +1098,7 @@
           if (card.closest('#home')) {
             card.addEventListener('click', (e) => {
               const section = e.currentTarget.dataset.section;
-              if (section) navigate(section);
+              if (section) self._navigate(section);
             });
           }
         });
@@ -1048,17 +1107,19 @@
         const params = new URLSearchParams(window.location.search);
         const section = params.get('section');
         if (section && document.getElementById(`${section}`)) {
-          navigate(section);
+          const itemId = params.get('item');
+          self._navigate(section, itemId);
         }
       },
 
       _bindInventoryClicks() {
         // Click en items del inventory -> abrir modal
-        document.querySelectorAll('.inventory-slot').forEach(slot => {
+        document.querySelectorAll('.gallery-item-slot').forEach(slot => {
+          const self = this
           slot.addEventListener('click', (e) => {
             const item = e.currentTarget.dataset.item;
             const section = e.currentTarget.dataset.section;
-            if (item && section) this.openModal(item, section);
+            if (item && section) self._navigate(section, item);
           });
         });
       },
@@ -1076,6 +1137,7 @@
 
       // === MODAL DE ITEM ===
       openModal(itemId, sectionId) {
+        document.body.style.overflow = 'hidden';
         // Datos estáticos de referencia (puedes mover a un JSON externo)
         const itemsDB = {
           esc1: { name: 'Misión Espacial', price: '$25', desc: 'Escapa de la estación espacial en 60 min', img: 'https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=400' },
@@ -1084,9 +1146,113 @@
           res1: { name: 'Auditoría Seguridad IA', price: 'Consultar', desc: 'Análisis de vulnerabilidades con IA', img: 'https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=400' },
           res2: { name: 'Automatización RPA', price: 'Consultar', desc: 'Optimización con RPA', img: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400' },
           res3: { name: 'Software a Medida', price: 'Consultar', desc: 'Desarrollo personalizado', img: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=400' },
-          edu1: { name: 'Curso Python IA', price: '$150', desc: 'Aprende Python aplicado a IA', img: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400', date: '2026-05-15' },
-          edu2: { name: 'Workshop Ciberseguridad', price: '$80', desc: 'Taller intensivo 2 días', img: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=400', date: '2026-06-01' },
-          edu3: { name: 'Bootcamp Full Stack', price: '$500', desc: '12 semanas intensivas', img: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400', date: '2026-07-01' },
+          edu1: { name: 'Programación: Didactica especifica', price: '$20.000', desc: `
+          <h4>Objetivo</h4>
+          En este curso aprenderas a programar en un lenguaje de programación de tu elección, con el fin de enseñar en primaria.
+          <h4>Contenido</h4>
+          <b>Dia 1</b>
+          <ol>
+            <li>+ Acercamiento a la neurodidactica</li>
+            <li>+ ¿Exponer, guiar o practicar?</li>
+            <li>+ Lo discreto y el hardware</li>
+            <li>+ Arquitectura de computadoras</li>
+            <li>+ Conceptos de programación</li>
+            <li>+ Internet de las cosas</li>
+          </ol>
+          <br>
+          <b>Dia 2</b>
+          <ol>            
+            <li>+ Herramientas y estrategias</li>
+            <li>+ Programación: sintaxis</li>
+            <li>+ Programación: manos a la obra</li>
+            <li>+ ¿Programar en un lenguaje o utilizar una herramienta de bloques?</li>
+            <li>+ Objetivos reales según limitaciones</li>
+          </ol>
+
+          <h4>Duración</h4>
+          <p>2 dias de clase y 2 horas</p>
+          <p>1 hora de laboratorio para consultas sobre las practicas cualquier otro día</p>
+          
+          <h4>Requisitos</h4>
+          <p>Informar si traeran su propia PC</p>
+          <p>Confirmar asistencia al menos 1 dia antes, ya que preparamos los materiales segun la cantidad de participantes</p>
+          
+          <h4>Costo</h4>
+          <p>El total de $20.000 se abonara por cada clase $10.000, el dia de laboratorio o consulta no se cobrará.</p>
+          
+          `, img: '/images/didactica.avif', date: '2026-05-02 20hs' },
+          edu2: { name: 'Clases particulares de programación', price: '$5000', desc: `
+          <h4>Objetivo</h4>
+          Estas clases son solo de apoyo escolar a cualquier nivel educativo. Si necesitas ayuda para aprender a programar, estas clases son para ti.
+          <ul>
+            <li>Programación: diagramas de flujo</li>
+            <li>Programción: conceptos</li>
+            <li>Programación: sintaxis</li>
+            <li>Programación: herramientas</li>
+            <li>Programación: bases de datos</li>
+          </ul>
+          
+          <h4>Lenguajes</h4>
+          <ol>
+            <li>+ Pseudocodigo</li>
+            <li>+ Python</li>
+            <li>+ Delphi</li>
+            <li>+ GO</li>
+            <li>+ C#</li>
+            <li>+ PHP</li>
+            <li>+ HTML</li>
+            <li>+ CSS</li>
+            <li>+ Javascript</li>
+            <li>+ SQL</li>
+          </ol>
+
+          <h4>Herramientas</h4>
+          <ol>
+            <li>+ Scratch</li>
+            <li>+ mBlock</li>
+            <li>+ Blockly</li>
+          </ol>
+
+          <h4>Duración</h4>
+          <p> La duración sera de 2 horas por clase</p>
+
+          <h4>Requisitos</h4>
+          <p>Siempre confirmar asistencia</p>
+
+          <h4>Costo</h4>
+          <p>El total de $5000 se abonara por cada clase.</p>
+          
+          <h4>Observaciones</h4>
+          <p>Estas clases son para estudiantes de instituciones formales solamente de cualquier nivel, para profesionales ofrecemos consultorias.</p>
+          `, img: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=400', date: 'Todos los dias' },
+          edu3: { name: 'Clases para adultos mayores', price: '$2000', desc: `
+          <h4>Objetivo</h4>
+          En este curso aprenderas a ser un usuario de PC y cuidarte de las estafas.
+          <h4>Contenido</h4>
+          <ol>
+            <li>+ Documentos</li>
+            <li>+ Explorador</li>
+            <li>+ La web</li>
+            <li>+ Ataques comunes y la IA</li>
+            <li>+ Habitos de seguridad para el uso cotidiano</li>
+          </ol>
+
+          <h4>Duración</h4>
+          <p> No tiene duración sera a su tiempo los miercoles o jueves por la tarde</p>
+
+          <h4>Requisitos</h4>
+          <p>Siempre confirmar asistencia</p>
+
+          <h4>Costo</h4>
+          <p>El total de $2000 se abonara por cada clase.</p>
+
+          <h4>Observaciones</h4>
+          <ol>
+            <li>+ Nosotros le prestamos la PC si no tiene una.</li>
+            <li>+ Este curso es para adultos mayores de 50 años o mayores por su descuento.</li>
+            <li>+ El curso es de 1 hora y 30 minutos.</li>
+          </ol>
+          `, img: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400', date: '2026-07-01' },
           pr1: { name: 'Figura Personalizada', price: '$45', desc: 'Impresión 3D de alta calidad', img: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=400' },
           pr2: { name: 'Prototipo Industrial', price: 'Consultar', desc: 'Prototipado rápido', img: 'https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?w=400' },
           pr3: { name: 'Llavero Gaming', price: '$15', desc: 'Diseños personalizados', img: 'https://images.unsplash.com/photo-1616423664045-6c600ad59935?w=400' }
@@ -1098,14 +1264,14 @@
         const hasDate = item.date;
         document.getElementById('modal-content').innerHTML = `
           <div class="relative">
-            <button onclick="App.UI.closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white z-10"><i class="fas fa-times text-2xl"></i></button>
+            <button onclick="App.UI.closeModal()" class="fixed top-4 right-10 text-gray-400 hover:text-white z-10"><i class="fas fa-times text-4xl"></i></button>
             <img src="${item.img}" class="w-full h-64 object-cover rounded-t-lg" alt="${item.name}">
             <div class="p-6">
               <div class="flex justify-between items-start mb-4">
                 <h2 class="font-game text-2xl text-neon-blue">${item.name}</h2>
                 <span class="bg-neon-green text-dark-bg px-3 py-1 rounded font-bold">${item.price}</span>
               </div>
-              <p class="text-gray-300 mb-6">${item.desc}</p>
+              <div class="modal-content-desc">${item.desc}</div>
               ${hasDate ? `<div class="bg-panel border border-neon-pink/50 rounded p-4 mb-6"><div class="text-neon-pink font-game text-xs mb-2">SCHEDULE</div><div class="text-white"><i class="far fa-calendar mr-2"></i>${item.date}</div></div>` : ''}
               <div class="flex space-x-4">
                 <button onclick="App.Cart.add(${JSON.stringify(item).replace(/"/g, '&quot;')})" class="flex-1 game-btn text-dark-bg font-bold py-3 rounded"><i class="fas fa-cart-plus mr-2"></i>Agregar al carrito</button>
@@ -1117,7 +1283,10 @@
         document.getElementById('modal').classList.remove('hidden');
       },
 
-      closeModal() { document.getElementById('modal')?.classList.add('hidden'); },
+      closeModal() { 
+        document.body.style.overflow = 'auto';
+        document.getElementById('modal')?.classList.add('hidden');
+       },
       closeCart() { document.getElementById('cart-modal').classList.add('hidden'); },
 
       renderCartItems() {
